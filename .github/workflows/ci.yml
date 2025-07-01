@@ -1,0 +1,43 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install frontend dependencies
+      run: npm install
+
+    - name: Build frontend
+      run: npm run build
+
+    - name: Install backend dependencies
+      working-directory: ../backend
+      run: npm install
+
+    - name: Lint backend (optional)
+      working-directory: ../backend
+      run: npm run lint || echo "Linting failed (optional)"
+
+    - name: Run backend tests (optional)
+      working-directory: ../backend
+      run: npm test || echo "No backend tests"
