@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Full CI/CD Pipeline
 
 on:
   push:
@@ -7,37 +7,47 @@ on:
     branches: [main]
 
 jobs:
-  build:
-
+  frontend:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: frontend
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Node.js
+    - uses: actions/checkout@v3
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20'
-
+        node-version: '16'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
     - name: Install frontend dependencies
-      run: npm install
-
+      run: |
+        cd frontend
+        npm install
     - name: Build frontend
-      run: npm run build
+      run: |
+        cd frontend
+        npm run build
+    - name: Run frontend tests
+      run: |
+        cd frontend
+        npm test
 
+  backend:
+    runs-on: ubuntu-latest
+    needs: frontend
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
     - name: Install backend dependencies
-      working-directory: ../backend
-      run: npm install
-
-    - name: Lint backend (optional)
-      working-directory: ../backend
-      run: npm run lint || echo "Linting failed (optional)"
-
-    - name: Run backend tests (optional)
-      working-directory: ../backend
-      run: npm test || echo "No backend tests"
+      run: |
+        cd backend
+        npm install
+    - name: Run backend tests
+      run: |
+        cd backend
+        npm test
