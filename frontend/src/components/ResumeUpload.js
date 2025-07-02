@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 function ResumeUpload() {
@@ -27,20 +27,20 @@ function ResumeUpload() {
     }
   };
 
-  const fetchResumes = async () => {
+  const fetchResumes = useCallback(async () => {
     try {
       const res = await axios.get(`http://localhost:5000/resumes/${user_id}`);
       setResumes(res.data);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [user_id]);
 
   useEffect(() => {
     if (user_id) {
       fetchResumes();
     }
-  }, [user_id]);
+  }, [user_id, fetchResumes]);
 
   return (
     <div>
