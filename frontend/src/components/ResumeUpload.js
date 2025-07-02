@@ -6,6 +6,20 @@ function ResumeUpload() {
   const [resumes, setResumes] = useState([]);
   const user_id = localStorage.getItem('user_id');
 
+  const fetchResumes = useCallback(async () => {
+    if (!user_id) return;
+    try {
+      const res = await axios.get(`http://localhost:5000/resumes/${user_id}`);
+      setResumes(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [user_id]);
+
+  useEffect(() => {
+    fetchResumes();
+  }, [fetchResumes]); // ✅ include fetchResumes only
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -21,26 +35,11 @@ function ResumeUpload() {
     try {
       await axios.post('http://localhost:5000/upload-resume', formData);
       alert('Resume uploaded!');
-      fetchResumes(); // Refresh list
+      fetchResumes(); // ✅ still works here
     } catch (err) {
       alert('Upload failed');
     }
   };
-
-  const fetchResumes = useCallback(async () => {
-    try {
-      const res = await axios.get(`http://localhost:5000/resumes/${user_id}`);
-      setResumes(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [user_id]);
-
-  useEffect(() => {
-    if (user_id) {
-      fetchResumes();
-    }
-  }, [user_id, fetchResumes]);
 
   return (
     <div>
