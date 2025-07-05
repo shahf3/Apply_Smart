@@ -1,3 +1,4 @@
+const axios = require('axios');
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
@@ -6,6 +7,49 @@ const pool = require('./database');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); 
 require('dotenv').config();
+const fs = require('fs');
+const pdfParse = require('pdf-parse');
+const jobRoutes = require('./routes/jobRoutes');
+const OpenAI = require("openai");
+
+const openapi = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function getATSScore(resumeText, jobDescription) {
+  const prompt = `
+You are an ATS resume scoring system.
+Compare this resume and job description, and give a score out of 100 based on keyword match, relevant experience, and skills.
+
+Resume:
+${resumeText}
+
+Job Description:
+${jobDescription}
+
+Return only the numeric score and one sentence summary.
+`;
+
+  try {
+    const response = await openapi.chat.completions.create({
+      model: "gpt-3.5-turbo", // Use this for your current API key
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    // ✅ Correct usage with OpenAI SDK – no `.data`
+    const output = response.choices[0].message.content;
+
+    const scoreMatch = output.match(/\d{1,3}/);
+    return {
+      raw: output,
+      score: scoreMatch ? parseInt(scoreMatch[0]) : 0,
+    };
+  } catch (error) {
+    console.error("Error in getATSScore:", error);
+    throw error;
+  }
+}
+
 
 const app = express();
 app.use(cors());
@@ -155,6 +199,42 @@ app.get('/resumes/:userId', async (req, res) => {
     res.status(500).send('Error fetching resumes');
   }
 });
+
+app.post('/score-resume', upload.single('resume'), async (req, res) => {
+  try {
+    if (!req.file) {
+      console.error("No file uploaded");
+      return res.status(400).send('No file uploaded');
+    }
+    if (!req.body.jobDescription) {
+      console.error("No jobDescription provided");
+      return res.status(400).send('No job description provided');
+    }
+
+    console.log('Uploaded file:', req.file);
+    console.log('Job description:', req.body.jobDescription);
+
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const parsed = await pdfParse(fileBuffer);
+
+    console.log('Parsed PDF text length:', parsed.text.length);
+
+    const score = await getATSScore(parsed.text, req.body.jobDescription);
+
+    console.log('Score response:', score);
+
+    res.json({ score });
+  } catch (err) {
+    if (err.status === 429) {
+      return res.status(429).send('Rate limit exceeded, please try again later.');
+    }
+    console.error("Error in /score-resume:", err);
+    res.status(500).send('Failed to parse PDF or calculate score');
+  }
+});
+
+// Endpoint to fetch LinkedIn jobs via RapidAPI
+app.use('/api/', jobRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

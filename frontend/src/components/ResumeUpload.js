@@ -18,7 +18,7 @@ function ResumeUpload() {
 
   useEffect(() => {
     fetchResumes();
-  }, [fetchResumes]); // ✅ include fetchResumes only
+  }, [fetchResumes]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -35,26 +35,59 @@ function ResumeUpload() {
     try {
       await axios.post('http://localhost:5000/upload-resume', formData);
       alert('Resume uploaded!');
-      fetchResumes(); // ✅ still works here
+      fetchResumes();
+      setFile(null); // Clear the file input
     } catch (err) {
       alert('Upload failed');
     }
   };
 
-  return (
-    <div>
-      <h3>Upload Resume</h3>
-      <form onSubmit={handleUpload}>
-        <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} required />
-        <button type="submit">Upload</button>
-      </form>
+  const getFileExtension = (filename) => {
+    return filename.split('.').pop().toUpperCase();
+  };
 
-      <h4>Your Resumes</h4>
-      <ul>
-        {resumes.map((resume) => (
-          <li key={resume.id}>{resume.filename}</li>
-        ))}
-      </ul>
+  return (
+    <div className="card">
+      <h3>
+        <div className="icon">📄</div>
+        Upload Resume
+      </h3>
+      <div className="upload-section">
+        <form onSubmit={handleUpload} className="upload-form">
+          <div className="file-input-wrapper">
+            <input 
+              type="file" 
+              accept=".pdf,.doc,.docx" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <label className="file-input-label">
+              {file ? file.name : 'Choose File (PDF, DOC, DOCX)'}
+            </label>
+          </div>
+          <button type="submit" className="upload-button">
+            Upload Resume
+          </button>
+        </form>
+
+        <div className="resume-list">
+          <h4>Your Resumes</h4>
+          {resumes.length > 0 ? (
+            <ul>
+              {resumes.map((resume) => (
+                <li key={resume.id}>
+                  <div className="resume-icon">
+                    {getFileExtension(resume.filename)}
+                  </div>
+                  <span>{resume.filename}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No resumes uploaded yet.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
