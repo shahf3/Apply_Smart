@@ -10,6 +10,7 @@ require('dotenv').config();
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
 const jobRoutes = require('./routes/jobRoutes');
+const geolocationRoutes = require('./routes/geolocationRoutes');
 const OpenAI = require("openai");
 
 const openapi = new OpenAI({
@@ -234,7 +235,8 @@ app.post('/score-resume', upload.single('resume'), async (req, res) => {
 });
 
 // Endpoint to fetch LinkedIn jobs via RapidAPI
-app.use('/api/', jobRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api', geolocationRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

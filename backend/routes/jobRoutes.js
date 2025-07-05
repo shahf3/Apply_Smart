@@ -45,12 +45,13 @@ router.get('/search-jobs', async (req, res) => {
     (yc.data || []).forEach(job => {
       allJobs.push({
         title: job.title,
-        company: job.company_name,
-        location: job.location,
-        apply_link: job.job_apply_link,
+        company: job.company || job.company_name || 'N/A',
+        location: job.location || job.country || job.city || 'N/A',
+        apply_link: job.job_apply_link || job.url || job.link || null,
         source: 'Y Combinator'
       });
     });
+    console.log('Y Combinator job sample:', yc.data[0]);
   } catch (err) {
     console.warn('Y Combinator API failed:', err.message);
   }
@@ -63,12 +64,13 @@ router.get('/search-jobs', async (req, res) => {
     (intern.data || []).forEach(job => {
       allJobs.push({
         title: job.title,
-        company: job.company_name,
-        location: job.location,
-        apply_link: job.job_apply_link,
+        company: job.company || job.company_name || 'N/A',
+        location: job.location || job.country || job.city || 'N/A',
+        apply_link: job.job_apply_link || job.url || job.link || null,
         source: 'Internships'
       });
     });
+    console.log('Internship job sample:', intern.data[0]);
   } catch (err) {
     console.warn('Internships API failed:', err.message);
   }
