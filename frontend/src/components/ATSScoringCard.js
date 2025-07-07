@@ -21,7 +21,10 @@ function ATSScoringSection() {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/score-resume", formData);
+      const res = await axios.post(
+        "http://localhost:5000/score-resume",
+        formData
+      );
       setScore(res.data.score);
       //setFeedback(res.data.summary);
     } catch (err) {
@@ -61,19 +64,38 @@ function ATSScoringSection() {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="score-button"
-        >
+        <button type="submit" disabled={loading} className="score-button">
           {loading ? "Scoring..." : "Score Resume"}
         </button>
       </form>
 
-      {score !== null && (
+      {score && (
         <div className="score-result">
-          <div className="score-number">ATS Score: {score.score}/100</div>
-          <p className="score-feedback">{score.raw}</p>
+          <h4>ATS Score: {score.score}/100</h4>
+          <p>{score.summary}</p>
+
+          <div>
+            <h5>🔍 Missing Keywords:</h5>
+            <ul>
+              {score.missing_keywords?.map((kw, i) => (
+                <li key={i}>{kw}</li>
+              ))}
+            </ul>
+
+            <h5>⚡ Action Verbs:</h5>
+            <ul>
+              {score.action_words?.map((word, i) => (
+                <li key={i}>{word}</li>
+              ))}
+            </ul>
+
+            <h5>💡 Improvement Suggestions:</h5>
+            <ul>
+              {score.improvements?.map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </div>
