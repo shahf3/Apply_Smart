@@ -6,7 +6,7 @@ function ATSScoringSection() {
   const [jobDescription, setJobDescription] = useState("");
   const [score, setScore] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState("");
+  //const [feedback, setFeedback] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ function ATSScoringSection() {
     try {
       const res = await axios.post("http://localhost:5000/score-resume", formData);
       setScore(res.data.score);
-      setFeedback(res.data.summary);
+      //setFeedback(res.data.summary);
     } catch (err) {
       console.error("Scoring failed:", err);
       alert("Failed to score resume");
@@ -72,8 +72,8 @@ function ATSScoringSection() {
 
       {score !== null && (
         <div className="score-result">
-          <div className="score-number">ATS Score: {score}/100</div>
-          <p className="score-feedback">{feedback}</p>
+          <div className="score-number">ATS Score: {score.score}/100</div>
+          <p className="score-feedback">{score.raw}</p>
         </div>
       )}
     </div>

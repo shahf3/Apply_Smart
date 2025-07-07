@@ -11,11 +11,13 @@ const fs = require('fs');
 const pdfParse = require('pdf-parse');
 const jobRoutes = require('./routes/jobRoutes');
 const geolocationRoutes = require('./routes/geolocationRoutes');
-const OpenAI = require("openai");
-
+/*const OpenAI = require("openai");
 const openapi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-});
+});*/
+
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 async function getATSScore(resumeText, jobDescription) {
   const prompt = `
@@ -32,13 +34,9 @@ Return only the numeric score and one sentence summary.
 `;
 
   try {
-    const response = await openapi.chat.completions.create({
-      model: "gpt-3.5-turbo", // Use this for your current API key
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    // ✅ Correct usage with OpenAI SDK – no `.data`
-    const output = response.choices[0].message.content;
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
+    const output = result.response.text();
 
     const scoreMatch = output.match(/\d{1,3}/);
     return {
@@ -46,11 +44,10 @@ Return only the numeric score and one sentence summary.
       score: scoreMatch ? parseInt(scoreMatch[0]) : 0,
     };
   } catch (error) {
-    console.error("Error in getATSScore:", error);
+    console.error("Gemini error:", error);
     throw error;
   }
 }
-
 
 const app = express();
 app.use(cors());
