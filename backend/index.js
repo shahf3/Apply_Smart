@@ -198,31 +198,27 @@ app.post("/profile", async (req, res) => {
   }
 });
 
-app.get("/test", (req, res) => res.send("Backend is working"));
+//app.get("/test", (req, res) => res.send("Backend is working"));
 
-// file upload endpoint
-
+// Upload resume and extract text
 app.post("/upload-resume", upload.single("resume"), async (req, res) => {
-  console.log("Received upload request");
-  console.log("req.body:", req.body);
-  console.log("req.file:", req.file);
-
   const { user_id } = req.body;
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-  }
+  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
   const filePath = req.file.path;
   const fileName = req.file.originalname;
 
   try {
+    const fileBuffer = fs.readFileSync(filePath);
+    const parsed = await pdfParse(fileBuffer);
+
     await pool.query(
-      "INSERT INTO resumes (user_id, filename, path) VALUES ($1, $2, $3)",
-      [user_id, fileName, filePath]
+      "INSERT INTO resumes (user_id, filename, path, text_content) VALUES ($1, $2, $3, $4)",
+      [user_id, fileName, filePath, parsed.text]
     );
-    res.status(200).json({ message: "Resume uploaded successfully" });
+    res.status(200).json({ message: "Resume uploaded and extracted" });
   } catch (err) {
-    console.error("Database error:", err);
+    console.error("Upload failed:", err);
     res.status(500).send("Upload failed");
   }
 });
@@ -231,13 +227,101 @@ app.get("/resumes/:userId", async (req, res) => {
   const userId = req.params.userId;
   try {
     const result = await pool.query(
-      "SELECT id, filename FROM resumes WHERE user_id = $1 ORDER BY uploaded_at DESC",
+      "SELECT id, filename, path FROM resumes WHERE user_id = $1 ORDER BY uploaded_at DESC",
       [userId]
     );
     res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching resumes");
+  }
+});
+
+// Update resume text content
+app.put("/resumes/:resumeId", async (req, res) => {
+  const { resumeId } = req.params;
+  const { updatedText, userId } = req.body;
+
+  try {
+    const result = await pool.query(
+      "UPDATE resumes SET text_content = $1 WHERE id = $2 AND user_id = $3 RETURNING *",
+      [updatedText, resumeId, userId]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).send("Resume not found or not authorized");
+    }
+    res.json({ message: "Resume updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating resume");
+  }
+});
+
+// Fetch resume details including path
+app.get("/resume-details/:resumeId", async (req, res) => {
+  const { resumeId } = req.params;
+
+  try {
+    const result = await pool.query(
+      "SELECT id, filename, path, uploaded_at FROM resumes WHERE id = $1",
+      [resumeId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    console.log("Resume details from DB:", result.rows[0]); // DEBUG
+    
+    // Check if file exists
+    const fs = require('fs');
+    const path = require('path');
+    const filePath = result.rows[0].path;
+    
+    if (fs.existsSync(filePath)) {
+      console.log("File exists at path:", filePath); // DEBUG
+    } else {
+      console.log("File NOT found at path:", filePath); // DEBUG
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching resume details:", err);
+    res.status(500).send("Error fetching resume details");
+  }
+});
+
+app.get('/test-static/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'uploads', filename);
+  
+  console.log("Testing static file:", filePath);
+  console.log("File exists:", fs.existsSync(filePath));
+  
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('File not found');
+  }
+});
+// Fetch text content of a specific resume
+app.get("/resume-content/:resumeId", async (req, res) => {
+  const { resumeId } = req.params;
+
+  try {
+    const result = await pool.query(
+      "SELECT text_content FROM resumes WHERE id = $1",
+      [resumeId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching resume content:", err);
+    res.status(500).send("Error fetching resume content");
   }
 });
 
@@ -257,7 +341,7 @@ app.post("/score-resume", upload.single("resume"), async (req, res) => {
 
     const fileBuffer = fs.readFileSync(req.file.path);
     const parsed = await pdfParse(fileBuffer);
-
+    
     console.log("Parsed PDF text length:", parsed.text.length);
 
     const score = await getATSScore(parsed.text, req.body.jobDescription);
@@ -279,6 +363,7 @@ app.post("/score-resume", upload.single("resume"), async (req, res) => {
 // Endpoint to fetch LinkedIn jobs via RapidAPI
 app.use("/api/jobs", jobRoutes);
 app.use("/api", geolocationRoutes);
+app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
