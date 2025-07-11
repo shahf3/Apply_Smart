@@ -5,6 +5,7 @@ import ATSScoringCard from "./ATSScoringCard";
 import JobSearchResults from "./JobSearchResults";
 import "../styles/Dashboard.css"; // Import the CSS file
 import EditResumeDashboard from "./EditResumeDashboard";
+import CoverLetterGenerator from "./CoverLetterGenerator";
 
 function Dashboard() {
   const [userId, setUserId] = useState();
@@ -32,6 +33,7 @@ function Dashboard() {
         ) : (
           <p>Loading user information...</p>
         )}
+        <CoverLetterGenerator />
       </div>
 
       <div className="coming-soon">

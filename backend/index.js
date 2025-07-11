@@ -8,9 +8,12 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 require("dotenv").config();
 const fs = require("fs");
+const path = require("path");
 const pdfParse = require("pdf-parse");
 const jobRoutes = require("./routes/jobRoutes");
 const geolocationRoutes = require("./routes/geolocationRoutes");
+const coverLetterRoutes = require("./routes/coverLetterRoutes");
+
 /*const OpenAI = require("openai");
 const openapi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -18,6 +21,7 @@ const openapi = new OpenAI({
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+console.log("Gemini Key:", process.env.GEMINI_API_KEY ? "Loaded" : "Not loaded");
 
 async function getATSScore(resumeText, jobDescription) {
   const prompt = `You are an ATS resume scoring system.
@@ -363,7 +367,10 @@ app.post("/score-resume", upload.single("resume"), async (req, res) => {
 // Endpoint to fetch LinkedIn jobs via RapidAPI
 app.use("/api/jobs", jobRoutes);
 app.use("/api", geolocationRoutes);
+app.use("/api/cover-letter", coverLetterRoutes);
 app.use('/uploads', express.static('uploads'));
+app.use("/html", express.static(path.join(__dirname, "public", "html")));
+app.use("/pdf", express.static(path.join(__dirname, "public", "pdf")));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
