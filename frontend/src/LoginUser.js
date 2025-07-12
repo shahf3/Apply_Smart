@@ -30,11 +30,32 @@ function LoginUser() {
   };
 
    return (
-    <form onSubmit={handleSubmit}>
-      <input name="username" placeholder="Username" onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-      <button type="submit">Login</button>
-    </form>
+    <div className="bg-white rounded-2xl shadow-xl p-8 backdrop-blur-sm border border-white/20">
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">Welcome Back</h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input 
+                name="username" 
+                placeholder="Username" 
+                onChange={handleChange} 
+                required 
+                className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+            />
+            <input 
+                type="password" 
+                name="password" 
+                placeholder="Password" 
+                onChange={handleChange} 
+                required 
+                className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+            />
+            <button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+            >
+                Login
+            </button>
+        </form>
+    </div>
   );
 }
 
