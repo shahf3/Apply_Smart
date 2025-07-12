@@ -6,6 +6,7 @@ import JobSearchResults from "./JobSearchResults";
 import "../styles/Dashboard.css"; // Import the CSS file
 import EditResumeDashboard from "./EditResumeDashboard";
 import CoverLetterGenerator from "./CoverLetterGenerator";
+import MockInterview from "./MockInterview";
 
 function Dashboard() {
   const [userId, setUserId] = useState();
@@ -34,6 +35,7 @@ function Dashboard() {
           <p>Loading user information...</p>
         )}
         <CoverLetterGenerator />
+        <MockInterview />
       </div>
 
       <div className="coming-soon">

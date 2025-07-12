@@ -13,7 +13,7 @@ const pdfParse = require("pdf-parse");
 const jobRoutes = require("./routes/jobRoutes");
 const geolocationRoutes = require("./routes/geolocationRoutes");
 const coverLetterRoutes = require("./routes/coverLetterRoutes");
-
+const interviewRoutes = require("./routes/interviewRoutes");
 /*const OpenAI = require("openai");
 const openapi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -371,6 +371,8 @@ app.use("/api/cover-letter", coverLetterRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use("/html", express.static(path.join(__dirname, "public", "html")));
 app.use("/pdf", express.static(path.join(__dirname, "public", "pdf")));
+app.use("/api/interview", interviewRoutes);
+app.use("/api/interview", require("./routes/interviewRoutes"));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
