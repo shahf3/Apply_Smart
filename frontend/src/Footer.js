@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Briefcase, 
   Mail, 
@@ -20,7 +21,7 @@ const Footer = () => {
       { name: 'Features', href: '#features' },
       { name: 'Dashboard', href: '/dashboard' },
       { name: 'Resume Builder', href: '#resume' },
-      { name: 'Job Search', href: '#jobs' },
+      { name: 'Job Market News', href: '/job-market-news' },
       { name: 'ATS Scoring', href: '#ats' }
     ],
     support: [
@@ -128,12 +129,21 @@ const Footer = () => {
                 <ul className="space-y-2">
                   {footerLinks.product.map((link) => (
                     <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
-                      >
-                        {link.name}
-                      </a>
+                      {link.href.startsWith('/') ? (
+                        <Link
+                          to={link.href}
+                          className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                        >
+                          {link.name}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                        >
+                          {link.name}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>

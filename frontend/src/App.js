@@ -12,6 +12,7 @@ import RegisterUser from "./registeruser";
 import LoginUser from "./LoginUser";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
+import JobMarketNews from "./components/JobMarketNews";
 import Footer from "./Footer";
 const ProfileForm = () => (
   <div className="bg-white rounded-2xl shadow-xl p-8 backdrop-blur-sm border border-white/20">
@@ -202,6 +203,15 @@ function App() {
         element={
           <div>
             <Dashboard />
+            <Footer />
+          </div>
+        }
+      />
+      <Route
+        path="/job-market-news"
+        element={
+          <div>
+            <JobMarketNews />
             <Footer />
           </div>
         }
