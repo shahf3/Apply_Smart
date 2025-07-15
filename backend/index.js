@@ -15,7 +15,7 @@ const geolocationRoutes = require("./routes/geolocationRoutes");
 const coverLetterRoutes = require("./routes/coverLetterRoutes");
 const interviewRoutes = require("./routes/interviewRoutes");
 const newsRoutes = require("./routes/newsRoutes");
-
+const resumeRoutes = require('./routes/resumeRoutes');
 /*const OpenAI = require("openai");
 const openapi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -376,6 +376,7 @@ app.use("/pdf", express.static(path.join(__dirname, "public", "pdf")));
 app.use("/api/interview", interviewRoutes);
 app.use("/api/interview", require("./routes/interviewRoutes"));
 app.use("/api/news", newsRoutes);
+app.use("/api", resumeRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
