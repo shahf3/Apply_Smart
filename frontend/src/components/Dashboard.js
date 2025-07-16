@@ -10,7 +10,7 @@ import ResumeBuilder from "./ResumeBuilder";
 function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [userId, setUserId] = useState(null);
+  const [, setUserId] = useState(null);
   const [userName, setUserName] = useState("");
   const [activeSection, setActiveSection] = useState("profile");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
