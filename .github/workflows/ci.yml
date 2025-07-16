@@ -69,7 +69,7 @@ jobs:
         echo "OPENCAGE_API_KEY=${{ secrets.OPENCAGE_API_KEY }}" >> .env
         echo "RAPIDAPI_KEY=${{ secrets.RAPIDAPI_KEY }}" >> .env
 
-    - name: Start backend (no tests for now)
-      run: |
-        cd backend
-        npm start
+#    - name: Start backend (no tests for now)
+#      run: |
+#        cd backend
+#        node index.js
