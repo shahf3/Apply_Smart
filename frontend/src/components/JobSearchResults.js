@@ -7,8 +7,8 @@ function JobSearchResults() {
   const [results, setResults] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  //const [page, setPage] = useState(1);
+  //const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     if ('geolocation' in navigator) {
