@@ -69,7 +69,7 @@ function ResumeBuilder() {
   });
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 p-8">
+    <div className="flex flex-col md:flex-row gap-8 p-8 bg-white rounded-xl shadow border border-blue-100">
       <div className="w-full md:w-1/2 space-y-6">
         <div className="flex gap-4 items-center">
           <label>Theme: </label>
@@ -164,7 +164,7 @@ function ResumeBuilder() {
         <button className="btn bg-green-600 text-white" onClick={handlePrint}>Download PDF</button>
       </div>
 
-      <div ref={previewRef} className={`w-full md:w-1/2 bg-white rounded-xl shadow p-8 resume-preview ${selectedTheme}`}>
+      <div ref={previewRef} className={`w-full md:w-1/2 bg-gray-50 rounded-xl shadow p-8 resume-preview ${selectedTheme}`}>
         {includeCoverPage && (
           <div className="mb-6 pb-6 border-b">
             <h1 className="text-4xl font-bold mb-2">{sections.personal.name}</h1>

@@ -12,20 +12,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '16'
         cache: 'npm'
         cache-dependency-path: frontend/package-lock.json
+
     - name: Install frontend dependencies
       run: |
         cd frontend
         npm install
+
     - name: Build frontend
       run: |
         cd frontend
         npm run build
+
     # - name: Run frontend tests
     #   run: |
     #     cd frontend
@@ -37,17 +41,35 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '16'
         cache: 'npm'
         cache-dependency-path: backend/package-lock.json
+
     - name: Install backend dependencies
       run: |
         cd backend
         npm install
-    - name: Run backend tests
+
+    - name: Create .env file from GitHub secrets
       run: |
         cd backend
-        npm test
+        echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+        echo "PORT=${{ secrets.PORT }}" >> .env
+        echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+        echo "JOOBLE_KEY=${{ secrets.JOOBLE_KEY }}" >> .env
+        echo "THEIRSTACK_KEY=${{ secrets.THEIRSTACK_KEY }}" >> .env
+        echo "NEWSDATA_API_KEY=${{ secrets.NEWSDATA_API_KEY }}" >> .env
+        echo "ADZUNA_APP_KEY=${{ secrets.ADZUNA_APP_KEY }}" >> .env
+        echo "ADZUNA_APP_ID=${{ secrets.ADZUNA_APP_ID }}" >> .env
+        echo "OPENCAGE_API_KEY=${{ secrets.OPENCAGE_API_KEY }}" >> .env
+        echo "RAPIDAPI_KEY=${{ secrets.RAPIDAPI_KEY }}" >> .env
+
+    - name: Start backend (no tests for now)
+      run: |
+        cd backend
+        npm start

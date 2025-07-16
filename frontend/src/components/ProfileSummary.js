@@ -61,47 +61,46 @@ function ProfileSummary() {
 
   if (!user_id) {
     return (
-      <div className="card">
-        <h3><div className="icon">👤</div>Profile Summary</h3>
-        <p>User not logged in</p>
+      <div className="bg-white rounded-xl shadow p-6 border border-blue-100">
+        <h3 className="text-lg font-semibold text-blue-700 mb-4 border-b border-blue-50 pb-2 flex items-center gap-2">👤 Profile Summary</h3>
+        <p className="text-gray-600">User not logged in</p>
       </div>
     );
   }
 
   return (
-    <div className="card">
-      <h3><div className="icon">👤</div>Profile Summary</h3>
-
+    <div className="bg-white rounded-xl shadow p-6 border border-blue-100">
+      <h3 className="text-lg font-semibold text-blue-700 mb-4 border-b border-blue-50 pb-2 flex items-center gap-2">👤 Profile Summary</h3>
       {editMode ? (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label>Bio:</label>
-            <textarea name="bio" value={formData.bio} onChange={handleChange} required />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Bio:</label>
+            <textarea name="bio" value={formData.bio} onChange={handleChange} required className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label>Experience:</label>
-            <textarea name="experience" value={formData.experience} onChange={handleChange} required />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Experience:</label>
+            <textarea name="experience" value={formData.experience} onChange={handleChange} required className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label>Skills:</label>
-            <input type="text" name="skills" value={formData.skills} onChange={handleChange} required />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Skills:</label>
+            <input type="text" name="skills" value={formData.skills} onChange={handleChange} required className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label>Education:</label>
-            <input type="text" name="education" value={formData.education} onChange={handleChange} required />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Education:</label>
+            <input type="text" name="education" value={formData.education} onChange={handleChange} required className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" />
           </div>
-          <button type="submit">Save Profile</button>
+          <button type="submit" className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 font-medium">Save Profile</button>
         </form>
       ) : (
         profile && (
-          <div className="profile-info">
-            <ul>
-              <li><strong>Bio:</strong> {profile.bio}</li>
-              <li><strong>Experience:</strong> {profile.experience}</li>
-              <li><strong>Skills:</strong> {profile.skills}</li>
-              <li><strong>Education:</strong> {profile.education}</li>
+          <div className="profile-info space-y-2">
+            <ul className="divide-y divide-blue-50">
+              <li className="py-2"><strong className="text-gray-700">Bio:</strong> <span className="text-gray-900">{profile.bio}</span></li>
+              <li className="py-2"><strong className="text-gray-700">Experience:</strong> <span className="text-gray-900">{profile.experience}</span></li>
+              <li className="py-2"><strong className="text-gray-700">Skills:</strong> <span className="text-gray-900">{profile.skills}</span></li>
+              <li className="py-2"><strong className="text-gray-700">Education:</strong> <span className="text-gray-900">{profile.education}</span></li>
             </ul>
-            <button onClick={() => setEditMode(true)}>Edit Profile</button>
+            <button onClick={() => setEditMode(true)} className="mt-4 bg-blue-100 text-blue-700 rounded-lg px-4 py-2 hover:bg-blue-200 font-medium">Edit Profile</button>
           </div>
         )
       )}

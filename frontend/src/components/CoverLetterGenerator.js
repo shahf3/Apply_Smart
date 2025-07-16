@@ -45,13 +45,11 @@ function CoverLetterGenerator() {
         </html>
       `;
 
-      // Save HTML to server
       await axios.post("http://localhost:5000/api/cover-letter/save-html", {
         fileName,
         htmlContent: htmlWrapper,
       });
 
-      // Trigger PDF export
       const pdfResponse = await axios.post("http://localhost:5000/api/cover-letter/generate-cover-letter-pdf", {
         fileName,
         coverLetterHtml: htmlWrapper
@@ -67,37 +65,42 @@ function CoverLetterGenerator() {
   };
 
   return (
-    <div style={{ marginTop: "30px" }}>
-      <h3>AI-Powered Cover Letter Generator</h3>
-
+    <div className="bg-white rounded-xl shadow p-6 border border-blue-100">
+      <h3 className="text-lg font-semibold text-blue-700 mb-4 border-b border-blue-50 pb-2 flex items-center gap-2">✍️ Cover Letter Generator</h3>
       <textarea
         placeholder="Paste your resume here..."
-        rows={6}
-        style={{ width: "100%", marginBottom: "10px" }}
+        rows={4}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-2 focus:ring-2 focus:ring-blue-500"
         value={resumeText}
         onChange={(e) => setResumeText(e.target.value)}
       />
-
       <textarea
         placeholder="Paste job description here..."
-        rows={6}
-        style={{ width: "100%", marginBottom: "10px" }}
+        rows={4}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-2 focus:ring-2 focus:ring-blue-500"
         value={jobDescription}
         onChange={(e) => setJobDescription(e.target.value)}
       />
-
-      <button onClick={handleGenerate} disabled={loading}>
+      <button
+        onClick={handleGenerate}
+        disabled={loading}
+        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg px-4 py-2 hover:from-blue-700 hover:to-purple-700 font-medium mb-2"
+      >
         {loading ? "Generating..." : "Generate Cover Letter"}
       </button>
-
       {generatedLetter && (
-        <>
-          <h4 style={{ marginTop: "20px" }}>Your Cover Letter</h4>
-          <ReactQuill value={generatedLetter} onChange={setGeneratedLetter} />
-          <button style={{ marginTop: "10px" }} onClick={handleDownloadPDF}>
+        <div className="mt-4">
+          <h4 className="text-base font-semibold text-gray-800 mb-2">Your Cover Letter</h4>
+          <div className="bg-gray-50 rounded-lg p-4 mb-2">
+            <ReactQuill value={generatedLetter} onChange={setGeneratedLetter} />
+          </div>
+          <button
+            className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 font-medium"
+            onClick={handleDownloadPDF}
+          >
             Export as Formatted PDF
           </button>
-        </>
+        </div>
       )}
     </div>
   );

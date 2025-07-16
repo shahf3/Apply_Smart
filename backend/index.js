@@ -378,6 +378,14 @@ app.use("/api/interview", require("./routes/interviewRoutes"));
 app.use("/api/news", newsRoutes);
 app.use("/api", resumeRoutes);
 
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

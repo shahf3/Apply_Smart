@@ -109,9 +109,9 @@ const Navigation = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
+      </button>
+    </div>
+  </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
@@ -175,15 +175,15 @@ className="relative min-h-screen w-full max-w-screen overflow-hidden flex items-
           </button>
           <button className="border-2 border-white/20 text-white px-8 py-3.5 rounded-full font-medium hover:bg-white/10 hover:border-white/30 transition-all duration-300">
             Learn More
-          </button>
-        </div>
+      </button>
+    </div>
         
         <div className="mt-8 flex items-center justify-center space-x-2 text-gray-300 text-sm">
           <Sparkles className="w-4 h-4" />
           <span>Your career journey starts here</span>
           <Sparkles className="w-4 h-4" />
         </div>
-      </div>
+  </div>
     </section>
   );
 };
@@ -216,9 +216,9 @@ const AuthSection = () => {
               onClick={() => setMode('registeruser')}
             >
               Register
-            </button>
-          </div>
-        </div>
+      </button>
+    </div>
+  </div>
         <div className="bg-white rounded-2xl p-8 shadow-lg transition-all duration-300">
           {mode === 'login' ? <LoginUser /> : <RegisterUser />}
         </div>
@@ -400,7 +400,7 @@ const TestimonialsSection = () => {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Join thousands of successful job seekers who found their dream careers with Apply Smart.
           </p>
-        </div>
+    </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial, index) => (
@@ -408,12 +408,12 @@ const TestimonialsSection = () => {
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
                   {testimonial.avatar}
-                </div>
+  </div>
                 <div>
                   <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
                   <p className="text-sm text-gray-500">{testimonial.role} at {testimonial.company}</p>
-                </div>
-              </div>
+    </div>
+  </div>
               
               <div className="flex mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
@@ -423,7 +423,7 @@ const TestimonialsSection = () => {
               
               <Quote className="w-6 h-6 text-gray-200 mb-4" />
               <p className="text-gray-600 text-sm leading-relaxed">{testimonial.content}</p>
-            </div>
+          </div>
           ))}
         </div>
       </div>
@@ -454,7 +454,7 @@ const FAQSection = () => {
     }
   ];
 
-  return (
+    return (
     <section className="py-24 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -465,7 +465,7 @@ const FAQSection = () => {
             Find answers to common questions about Apply Smart.
           </p>
         </div>
-        
+
         <div className="space-y-3">
           {faqs.map((faq, index) => (
             <div key={index} className="bg-gray-50 rounded-xl p-6 transition-all duration-300 hover:shadow-md">
@@ -527,7 +527,7 @@ const ContactSection = () => {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
-        </div>
+            </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -593,15 +593,15 @@ const ContactSection = () => {
                   <div>
                     <p className="text-sm text-gray-500">Email</p>
                     <p className="text-gray-900">support@applysmart.com</p>
-                  </div>
                 </div>
-                
+              </div>
+
                 <div className="flex items-center space-x-3">
                   <MapPin className="w-6 h-6 text-blue-600 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-gray-500">Address</p>
                     <p className="text-gray-900">123 Career Street, Job City, JC 12345</p>
-                  </div>
+                    </div>
                 </div>
               </div>
             </div>

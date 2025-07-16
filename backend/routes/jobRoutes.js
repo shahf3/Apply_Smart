@@ -95,7 +95,7 @@ router.get('/search-jobs', async (req, res) => {
     console.warn('Internships API failed:', err.message);
   }
 
-  /*try {
+  try {
     const upwork = await axios.get('https://upwork-jobs-api2.p.rapidapi.com/active-freelance-1h?limit=10', {
       headers: headers('upwork-jobs-api2.p.rapidapi.com')
     });
@@ -110,7 +110,7 @@ router.get('/search-jobs', async (req, res) => {
     });
   } catch (err) {
     console.warn('Upwork API failed:', err.message);
-  }*/
+  }
 
   try {
   const remotiveRes = await axios.get('https://remotive.com/api/remote-jobs', {
@@ -133,6 +133,80 @@ router.get('/search-jobs', async (req, res) => {
     console.warn('Remotive API failed:', err.message);
   }
 
+  try {
+    const arRes = await axios.get('https://www.arbeitnow.com/api/job-board-api', {
+      params: { search: title, location }
+    });
+    (arRes.data.data || []).forEach(job => {
+      allJobs.push({
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        apply_link: job.url,
+        source: 'Arbeitnow'
+      });
+    });
+  } catch(err) {
+    console.warn('Arbeitnow failed:', err.message);
+  }
+
+  // Rhise API
+  try {
+    const rise = await axios.get('https://api.joinrise.io/api/v1/jobs/public', {
+      params: { page: pageInt, limit: limitInt }
+    });
+    (rise.data.jobs || []).forEach(job => {
+      allJobs.push({
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        apply_link: job.url,
+        source: 'Rhise'
+      });
+    });
+  } catch(err) {
+    console.warn('Rhise failed:', err.message);
+  }
+
+  // Jooble API
+  try {
+    const jooble = await axios.post(`https://api.jooble.org/api/${process.env.JOOBLE_KEY}`, {
+      keywords: title,
+      location,
+      page: pageInt,
+      ResultOnPage: limitInt
+    });
+    (jooble.data.jobs || []).forEach(job => {
+      allJobs.push({
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        apply_link: job.link,
+        source: 'Jooble'
+      });
+    });
+  } catch(err) {
+    console.warn('Jooble failed:', err.message);
+  }
+
+  // TheirStack API
+  try {
+    const ts = await axios.get('https://api.theirstack.com/jobs', {
+      params: { query: title, location, limit: limitInt },
+      headers: { Authorization: `Bearer ${process.env.THEIRSTACK_KEY}` }
+    });
+    (ts.data.jobs || []).forEach(job => {
+      allJobs.push({
+        title: job.job_title,
+        company: job.company,
+        location: job.location,
+        apply_link: job.url,
+        source: 'TheirStack'
+      });
+    });
+  } catch(err) {
+    console.warn('TheirStack failed:', err.message);
+  }
 
   return res.json({ page: pageInt, count: allJobs.length, jobs: allJobs });
 });
