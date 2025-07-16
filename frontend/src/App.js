@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {Routes, Route, useLocation} from "react-router-dom";
 import {
   User,
   Briefcase,
@@ -21,7 +22,6 @@ import {
 import Footer from "./Footer";
 import LoginUser from "./LoginUser";
 import RegisterUser from "./registeruser";
-import { Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import './App.css';
 // Navigation Component
@@ -637,13 +637,14 @@ function LandingPage() {
 
 // Main App Component
 function App() {
+  const location = useLocation();
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-white p-0">
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
-      <Footer />
+      {location.pathname !== "/dashboard" && <Footer />}
     </div>
   );
 }
