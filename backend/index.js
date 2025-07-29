@@ -26,27 +26,29 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 console.log("Gemini Key:", process.env.GEMINI_API_KEY ? "Loaded" : "Not loaded");
 
 async function getATSScore(resumeText, jobDescription) {
-  const prompt = `You are an ATS resume scoring system.
+  const cleanedResume = resumeText
+    .replace(/\s{2,}/g, " ")       // remove extra spaces
+    .replace(/[\r\n]{2,}/g, "\n")  // remove excess newlines
+    .trim();
 
-Compare the resume below against the job description. Do the following:
+  const cleanedJD = jobDescription.trim();
 
-1. Give a match score out of 100.
-2. Give a one-sentence summary of the match quality.
-3. List the top 5 missing or weak keywords the resume should include.
-4. List 5 strong action verbs the resume should use.
-5. Suggest 2–3 specific improvements to increase compatibility.
-6. resume_sentences: Suggest 3 to 5 strong, relevant, and tailored sentences that the candidate can add to their resume. These should:
-   - Match the job description
+  const prompt = `
+You are an expert ATS (Applicant Tracking System) resume scoring engine.
+
+Given the resume and job description below, perform the following:
+
+1. **Score**: Assign a match score out of 100 based on relevance and keyword overlap.
+2. **Summary**: Provide a concise, one-sentence summary explaining the match quality.
+3. **Missing Keywords**: List 5 key terms, technologies, or skills from the job description missing or underrepresented in the resume.
+4. **Strong Verbs**: Suggest 5 strong action verbs that should be used in the resume.
+5. **Improvements**: Suggest 3 precise edits or additions that would improve the match.
+6. **Resume Sentences**: Write 3 to 5 strong, tailored resume bullet points that:
+   - Address missing skills
    - Use action verbs
-   - Integrate the missing keywords naturally
+   - Align with the job description
 
-Resume:
-${resumeText}
-
-Job Description:
-${jobDescription}
-
-Return your response in this JSON format:
+Return the response strictly in this JSON format:
 
 {
   "score": <number>,
@@ -56,37 +58,34 @@ Return your response in this JSON format:
   "improvements": ["...", "..."],
   "resume_sentences": ["...", "..."]
 }
+
+Resume:
+${cleanedResume}
+
+Job Description:
+${cleanedJD}
 `;
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(prompt);
-    let output = result.response.text();
 
-    output = output.trim();
+    let output = result.response.text().trim();
+
     if (output.startsWith("```json")) {
-      output = output
-        .replace(/^```json/, "")
-        .replace(/```$/, "")
-        .trim();
+      output = output.replace(/^```json/, "").replace(/```$/, "").trim();
     } else if (output.startsWith("```")) {
       output = output.replace(/^```/, "").replace(/```$/, "").trim();
     }
 
-    let parsed;
-    try {
-      parsed = JSON.parse(output);
-    } catch (err) {
-      console.error("Gemini output could not be parsed as JSON:", output);
-      throw new Error("Invalid AI format. Please try again.");
-    }
-
+    const parsed = JSON.parse(output);
     return parsed;
   } catch (error) {
-    console.error("Gemini API error:", error);
-    throw error;
+    console.error("Gemini API error or JSON parsing failed:", error);
+    throw new Error("Failed to generate ATS score. Please try again.");
   }
 }
+
 
 const app = express();
 app.use(cors());

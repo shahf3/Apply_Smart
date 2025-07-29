@@ -5,7 +5,7 @@ import ATSScoringCard from "./ATSScoringCard";
 import JobSearchResults from "./JobSearchResults";
 import CoverLetterGenerator from "./CoverLetterGenerator";
 import MockInterview from "./MockInterview";
-import ResumeBuilder from "./ResumeBuilder";
+//import ResumeBuilder from "./ResumeBuilder";
 
 function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -41,8 +41,8 @@ function Dashboard() {
     { id: "ats", label: "ATS Scoring", icon: "📊" },
     { id: "jobs", label: "Job Search", icon: "🔍" },
     { id: "coverletter", label: "Cover Letter", icon: "✍️" },
-    { id: "interview", label: "Mock Interview", icon: "🎤" },
-    { id: "builder", label: "Resume Builder", icon: "🛠️" }
+    { id: "interview", label: "Mock Interview", icon: "🎤" }
+    //{ id: "builder", label: "Resume Builder", icon: "🛠️" }
   ];
 
   const renderActiveSection = () => {
@@ -59,8 +59,8 @@ function Dashboard() {
         return <CoverLetterGenerator />;
       case "interview":
         return <MockInterview />;
-      case "builder":
-        return <ResumeBuilder />;
+      /*case "builder":
+        return <ResumeBuilder />;*/
       default:
         return <ProfileSummary />;
     }
@@ -224,7 +224,7 @@ function Dashboard() {
                   {activeSection === 'jobs' && 'Search and discover job opportunities'}
                   {activeSection === 'coverletter' && 'Generate personalized cover letters'}
                   {activeSection === 'interview' && 'Practice with mock interviews'}
-                  {activeSection === 'builder' && 'Build your resume from scratch'}
+                  {/*{activeSection === 'builder' && 'Build your resume from scratch'}*/}
                 </p>
               </div>
             </div>
@@ -271,7 +271,7 @@ function Dashboard() {
                       {activeSection === 'jobs' && 'Find your next career opportunity'}
                       {activeSection === 'coverletter' && 'Create compelling cover letters'}
                       {activeSection === 'interview' && 'Prepare for your interviews'}
-                      {activeSection === 'builder' && 'Create a professional resume'}
+                      {/*{activeSection === 'builder' && 'Create a professional resume'}*/}
                     </p>
                   </div>
                 </div>
