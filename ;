@@ -1,0 +1,9 @@
+ id |   username   | firstname | lastname |           email           |                           password                           |         created_at         
+----+--------------+-----------+----------+---------------------------+--------------------------------------------------------------+----------------------------
+  1 | johndoe1     | John1     | Doe1     | john1@example.com         | $2b$10$wd3vq92EZRfx9e2LF.0IZudG8VHdl7E5r8Ntl7RGEDTlFF5SSRlju | 2025-06-30 21:18:31.510557
+  2 | shahf1       | Faizan    | Shah     | alishahfaizan12@gmail.com | $2b$10$hfB5QHYDt6NVmS42BCgswupew52otRlxl2KklTGJV09ljdYGxF/du | 2025-06-30 21:46:50.277925
+  3 | shahf2       | user1     | one      | user1@gmail.com           | $2b$10$xC1pbaUIYGyN95bAl7.DTOWmgMk42X9xgCKx8X81MIIZ3m.NhwDeq | 2025-07-01 12:56:17.477794
+  4 | shahf3       | fazzy     | abdec    | user2@gmail.com           | $2b$10$jsmDqAoMOR4ysDjU9CRR3uZ6zTeGb3w1YzUkzBM.oug6Oxj/c.BeG | 2025-07-05 16:11:37.582229
+  5 | username2425 |           |          | user2425@gmail.com        | $2b$10$uY.5UBId2gMkenjuv1iGEuXAR4o6bi5YoAVwSodcwhux5W3x6tBna | 2025-07-16 13:11:44.733554
+(5 rows)
+

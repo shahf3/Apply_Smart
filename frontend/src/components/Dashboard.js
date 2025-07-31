@@ -162,7 +162,7 @@ function Dashboard() {
   };
 
   // Skeleton Loader Component
-  const SkeletonLoader = () => (
+  /*const SkeletonLoader = () => (
     <div className="animate-pulse space-y-4">
       <div className={`${designSystem.colors.neutral?.[100] || 'bg-gray-100'} h-10 rounded-md`} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -171,7 +171,7 @@ function Dashboard() {
         ))}
       </div>
     </div>
-  );
+  );*/
 
   if (loading) {
     return (
