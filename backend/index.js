@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -10,20 +9,22 @@ const upload = multer({ dest: 'uploads/' });
 const fs = require('fs').promises;
 const path = require('path');
 const pdfParse = require('pdf-parse');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 const jobRoutes = require('./routes/jobRoutes');
 const geolocationRoutes = require('./routes/geolocationRoutes');
 const coverLetterRoutes = require('./routes/coverLetterRoutes');
 const interviewRoutes = require('./routes/interviewRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-console.log('Gemini Key:', process.env.GEMINI_API_KEY ? 'Loaded' : 'Not loaded');
 
 // Retry logic with exponential backoff
 async function makeRequestWithRetry(fn, maxRetries = 3, baseDelay = 1000) {
@@ -102,7 +103,7 @@ ${cleanedJD}
   }
 }
 
-// Register
+// Register (Local)
 app.post('/register', async (req, res) => {
   const { username, firstname, lastname, email, password } = req.body;
 
@@ -131,7 +132,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Login
+// Login (Local)
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -157,6 +158,79 @@ app.post('/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/register/google', async (req, res) => {
+  const { credential } = req.body;
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const googleId = payload.sub;
+    const email = payload.email;
+    const firstName = payload.given_name || '';
+    const lastName = payload.family_name || '';
+    const username = email.split('@')[0];
+
+    // Check if user already registered
+    const existingUser = await pool.query(
+      'SELECT * FROM users WHERE google_id = $1 OR email = $2',
+      [googleId, email]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ message: 'User already registered. Please login instead.' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO users (username, firstname, lastname, email, google_id)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [username, firstName, lastName, email, googleId]
+    );
+
+    res.status(201).json({ message: 'Google user registered successfully' });
+  } catch (error) {
+    console.error('Google registration failed:', error);
+    res.status(500).json({ message: 'Registration failed', error: error.message });
+  }
+});
+
+app.post('/auth/google', async (req, res) => {
+  const { credential } = req.body;
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const googleId = payload.sub;
+    const email = payload.email;
+
+    const userCheck = await pool.query(
+      'SELECT * FROM users WHERE google_id = $1 OR email = $2',
+      [googleId, email]
+    );
+
+    if (userCheck.rows.length === 0) {
+      return res.status(403).json({ message: 'User not registered. Please register first.' });
+    }
+
+    const user = userCheck.rows[0];
+    const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    res.json({ token, user_id: user.id, user_name: user.firstname });
+  } catch (error) {
+    console.error('Google login failed:', error.message);
+    res.status(401).json({ message: 'Login failed', error: error.message });
   }
 });
 

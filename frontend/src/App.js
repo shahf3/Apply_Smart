@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Routes, Route, useLocation} from "react-router-dom";
+import {Route, Routes, BrowserRouter as Router, useLocation} from "react-router-dom";
 import {
   User,
   Briefcase,
@@ -23,6 +23,8 @@ import Footer from "./Footer";
 import LoginUser from "./LoginUser";
 import RegisterUser from "./registeruser";
 import Dashboard from "./components/Dashboard";
+import GoogleCallback from "./GoogleCallback";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import './App.css';
 // Navigation Component
 const Navigation = () => {
@@ -635,17 +637,25 @@ function LandingPage() {
   );
 }
 
-// Main App Component
-function App() {
+function AppLayout() {
   const location = useLocation();
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-white p-0">
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
       {location.pathname !== "/dashboard" && <Footer />}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+      <AppLayout />
+    </GoogleOAuthProvider>
   );
 }
 
