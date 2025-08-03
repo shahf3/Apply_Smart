@@ -48,9 +48,9 @@ function LoginUser() {
     }
   };
 
-  const handleGoogleFailure = () => {
+  /*const handleGoogleFailure = () => {
     alert("Google login failed");
-  };
+  };*/
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 backdrop-blur-sm border border-white/20">
