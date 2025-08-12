@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Route, Routes, BrowserRouter as Router, useLocation} from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import {
   User,
   Briefcase,
@@ -19,6 +19,8 @@ import {
   ChevronDown,
   Quote
 } from "lucide-react";
+//import { ToastContainer, toast } from 'react-toastify';
+//import 'react-toastify/dist/ReactToastify.css';
 import Footer from "./Footer";
 import LoginUser from "./LoginUser";
 import RegisterUser from "./registeruser";
@@ -26,6 +28,7 @@ import Dashboard from "./components/Dashboard";
 import GoogleCallback from "./GoogleCallback";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import './App.css';
+
 // Navigation Component
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -111,9 +114,9 @@ const Navigation = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-    </div>
-  </div>
+            </button>
+          </div>
+        </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
@@ -145,31 +148,33 @@ const Navigation = () => {
 // Hero Section Component
 const HeroSection = () => {
   return (
-    <section id="home"
-className="relative min-h-screen w-full max-w-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <section
+      id="home"
+      className="relative min-h-screen w-full max-w-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+    >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-  <div className="absolute top-[-25%] right-[-25%] w-[300px] h-[300px] bg-purple-500/20 rounded-full blur-3xl"></div>
-  <div className="absolute bottom-[-25%] left-[-25%] w-[300px] h-[300px] bg-blue-500/20 rounded-full blur-3xl"></div>
-  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-pink-500/20 rounded-full blur-3xl"></div>
-</div>
+        <div className="absolute top-[-25%] right-[-25%] w-[300px] h-[300px] bg-purple-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-[-25%] left-[-25%] w-[300px] h-[300px] bg-blue-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-pink-500/20 rounded-full blur-3xl"></div>
+      </div>
 
       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-8 shadow-lg animate-bounce">
           <Briefcase className="w-8 h-8 text-white" />
         </div>
-        
+
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-fade-in tracking-tight">
           Apply Smart
         </h1>
-        
+
         <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6 bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent tracking-tight">
           Job Application Helper
         </h2>
-        
+
         <p className="text-lg sm:text-xl text-gray-200 mb-10 max-w-3xl mx-auto leading-relaxed">
           Streamline your job search with our powerful tools. Track applications, prepare for interviews, and land your dream job.
         </p>
-        
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <button className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3.5 rounded-full font-medium hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center space-x-2">
             <span>Start Your Journey</span>
@@ -177,15 +182,15 @@ className="relative min-h-screen w-full max-w-screen overflow-hidden flex items-
           </button>
           <button className="border-2 border-white/20 text-white px-8 py-3.5 rounded-full font-medium hover:bg-white/10 hover:border-white/30 transition-all duration-300">
             Learn More
-      </button>
-    </div>
-        
+          </button>
+        </div>
+
         <div className="mt-8 flex items-center justify-center space-x-2 text-gray-300 text-sm">
           <Sparkles className="w-4 h-4" />
           <span>Your career journey starts here</span>
           <Sparkles className="w-4 h-4" />
         </div>
-  </div>
+      </div>
     </section>
   );
 };
@@ -215,12 +220,12 @@ const AuthSection = () => {
                   ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
-              onClick={() => setMode('registeruser')}
+              onClick={() => setMode('register')}
             >
               Register
-      </button>
-    </div>
-  </div>
+            </button>
+          </div>
+        </div>
         <div className="bg-white rounded-2xl p-8 shadow-lg transition-all duration-300">
           {mode === 'login' ? <LoginUser /> : <RegisterUser />}
         </div>
@@ -245,7 +250,7 @@ const AboutSection = () => {
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               With our innovative tools and personalized approach, we help job seekers track applications, prepare for interviews, and ultimately land their dream positions.
             </p>
-            
+
             <div className="space-y-3">
               {[
                 "AI-powered job matching",
@@ -260,7 +265,7 @@ const AboutSection = () => {
               ))}
             </div>
           </div>
-          
+
           <div className="order-1 lg:order-2">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl transform rotate-2 opacity-20"></div>
@@ -342,7 +347,7 @@ const ServicesSection = () => {
             Comprehensive tools and services to accelerate your job search and career growth.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
             <div
@@ -402,30 +407,30 @@ const TestimonialsSection = () => {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Join thousands of successful job seekers who found their dream careers with Apply Smart.
           </p>
-    </div>
-        
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((testimonial, index) => (
             <div key={index} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
                   {testimonial.avatar}
-  </div>
+                </div>
                 <div>
                   <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
                   <p className="text-sm text-gray-500">{testimonial.role} at {testimonial.company}</p>
-    </div>
-  </div>
-              
+                </div>
+              </div>
+
               <div className="flex mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
                 ))}
               </div>
-              
+
               <Quote className="w-6 h-6 text-gray-200 mb-4" />
               <p className="text-gray-600 text-sm leading-relaxed">{testimonial.content}</p>
-          </div>
+            </div>
           ))}
         </div>
       </div>
@@ -456,7 +461,7 @@ const FAQSection = () => {
     }
   ];
 
-    return (
+  return (
     <section className="py-24 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -476,11 +481,13 @@ const FAQSection = () => {
                 className="w-full flex items-center justify-between text-left"
               >
                 <h3 className="text-base font-semibold text-gray-900">{faq.question}</h3>
-                <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
-                  openIndex === index ? 'rotate-180' : ''
-                }`} />
+                <ChevronDown
+                  className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                    openIndex === index ? 'rotate-180' : ''
+                  }`}
+                />
               </button>
-              
+
               {openIndex === index && (
                 <div className="mt-4 pt-4 border-t border-gray-200/50">
                   <p className="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
@@ -512,10 +519,10 @@ const ContactSection = () => {
   const handleSubmit = () => {
     if (formData.name && formData.email && formData.message) {
       console.log('Form submitted:', formData);
-      alert('Thank you for your message! We\'ll get back to you soon.');
+      //toast.success('Thank you for your message! We\'ll get back to you soon.');
       setFormData({ name: '', email: '', message: '' });
     } else {
-      alert('Please fill in all fields.');
+     // toast.error('Please fill in all fields.');
     }
   };
 
@@ -529,12 +536,27 @@ const ContactSection = () => {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
-            </div>
-        
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow duration-300">
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">Send us a message</h3>
             <div className="space-y-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50"
+                  placeholder="Your name"
+                />
+              </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email
@@ -550,7 +572,7 @@ const ContactSection = () => {
                   placeholder="your@email.com"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
                   Message
@@ -566,7 +588,7 @@ const ContactSection = () => {
                   placeholder="Your message..."
                 />
               </div>
-              
+
               <button
                 type="submit"
                 onClick={handleSubmit}
@@ -577,7 +599,7 @@ const ContactSection = () => {
               </button>
             </div>
           </div>
-          
+
           <div className="space-y-6">
             <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-2xl font-semibold text-gray-900 mb-6">Contact Information</h3>
@@ -589,25 +611,25 @@ const ContactSection = () => {
                     <p className="text-gray-900">+1 (555) 123-4567</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   <Mail className="w-6 h-6 text-blue-600 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-gray-500">Email</p>
                     <p className="text-gray-900">support@applysmart.com</p>
+                  </div>
                 </div>
-              </div>
 
                 <div className="flex items-center space-x-3">
                   <MapPin className="w-6 h-6 text-blue-600 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-gray-500">Address</p>
                     <p className="text-gray-900">123 Career Street, Job City, JC 12345</p>
-                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white shadow-md">
               <h3 className="text-2xl font-semibold mb-4">Ready to start your journey?</h3>
               <p className="mb-6 text-sm">Join thousands of job seekers who have found success with Apply Smart.</p>

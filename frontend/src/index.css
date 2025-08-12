@@ -22,3 +22,35 @@ html, body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+@layer utilities {
+  /* Hidden scrollbar but scroll still works */
+  .scrollbar-hidden {
+    @apply overflow-y-auto;
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* IE and Edge legacy */
+  }
+  .scrollbar-hidden::-webkit-scrollbar { /* Chrome, Edge, Safari */
+    display: none;
+  }
+
+  /* Thin scrollbar */
+  .scrollbar-thin {
+    @apply overflow-y-auto;
+    scrollbar-width: thin;      
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;                    
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-gray-400/50 hover:bg-gray-500/60;
+  }
+
+  .scrollbar-auto {
+    @apply overflow-y-auto;
+    scrollbar-width: auto;    
+  }
+  .scrollbar-auto::-webkit-scrollbar {
+    width: 12px;                   
+  }
+}

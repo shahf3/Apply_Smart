@@ -12,7 +12,7 @@ const pdfParse = require('pdf-parse');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
+const coachRoutes = require('./routes/coachRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const geolocationRoutes = require('./routes/geolocationRoutes');
 const coverLetterRoutes = require('./routes/coverLetterRoutes');
@@ -453,7 +453,7 @@ app.use('/api', resumeRoutes);
 app.use('/uploads', express.static('Uploads'));
 app.use('/html', express.static(path.join(__dirname, 'public', 'html')));
 app.use('/pdf', express.static(path.join(__dirname, 'public', 'pdf')));
-
+app.use('/api/coach', coachRoutes);
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
 });
