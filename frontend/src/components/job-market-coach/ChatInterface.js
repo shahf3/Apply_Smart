@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Sparkles, FileText, Target, BookOpen, Star, Lightbulb } from 'lucide-react';
+import { Send, Sparkles, FileText, Target, BookOpen, Star } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 
 // Re-using the mock API logic from the parent component
