@@ -39,14 +39,14 @@ const JobMarketCoach = React.lazy(() => import('./JobMarketCoach'))
 function Dashboard () {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [userId, setUserId] = useState(null)
+  const [, setUserId] = useState(null)
   const [userName, setUserName] = useState('')
   const [activeSection, setActiveSection] = useState('overview')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [profileCompletion, setProfileCompletion] = useState(0)
   const [isDarkMode, setIsDarkMode] = useState(false)
-  const [notifications, setNotifications] = useState(3)
+  const [notifications] = useState(3)
   const [dashboardStats, setDashboardStats] = useState({
     applications: 0,
     interviews: 0,
