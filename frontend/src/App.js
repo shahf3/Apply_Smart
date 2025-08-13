@@ -9,17 +9,16 @@ import {
   Shield,
   Zap,
   Menu,
+  Rocket,
   X,
-  Star,
+  MapPin,
   PenTool,
   ArrowRight,
   TrendingUp,
   CheckCircle2,
-  Phone,
-  Mail,
-  MapPin,
-  ChevronDown,
-  Quote,
+  ExternalLink,
+  Globe,
+  Code,
   FileText,
   BarChart3,
   Mic,
@@ -27,7 +26,7 @@ import {
   Brain,
   Search,
   ShieldCheck,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
 
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
@@ -56,7 +55,7 @@ const Navigation = () => {
     { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
     { name: "Services", href: "#services" },
-    { name: "Contact", href: "#contact" },
+    { name: "APIs", href: "#integrations" },
   ];
 
   return (
@@ -328,7 +327,7 @@ const stats = [
 
 const FeatureCard = ({ feature, index }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { icon: Icon, title, desc, color, bgColor, textColor } = feature;
+  const { icon: Icon, title, desc, color } = feature;
 
   return (
     <motion.div
@@ -793,8 +792,12 @@ const services = [
     description:
       "Practice realistic questions and receive structured feedback to improve quickly. Track your progress and refine your answers over time.",
     gradient: "from-blue-600 to-cyan-600",
-    features: ["AI-powered feedback", "Progress tracking", "Industry-specific questions"],
-    stats: "95% confidence boost"
+    features: [
+      "AI-powered feedback",
+      "Progress tracking",
+      "Industry-specific questions",
+    ],
+    stats: "95% confidence boost",
   },
   {
     icon: Zap,
@@ -802,8 +805,12 @@ const services = [
     description:
       "Compare your resume against a job description and receive a score with precise improvements.",
     gradient: "from-purple-600 to-pink-600",
-    features: ["Real-time scoring", "Keyword optimization", "Format suggestions"],
-    stats: "3x better match rate"
+    features: [
+      "Real-time scoring",
+      "Keyword optimization",
+      "Format suggestions",
+    ],
+    stats: "3x better match rate",
   },
   {
     icon: Shield,
@@ -811,8 +818,12 @@ const services = [
     description:
       "Generate concise, role specific cover letters that highlight your value. Personalize the tone and add company details for a stronger pitch.",
     gradient: "from-emerald-600 to-teal-600",
-    features: ["Role-specific content", "Company research", "Tone customization"],
-    stats: "2x response rate"
+    features: [
+      "Role-specific content",
+      "Company research",
+      "Tone customization",
+    ],
+    stats: "2x response rate",
   },
   {
     icon: User,
@@ -821,16 +832,15 @@ const services = [
       "Ask AI Career Coach for targeted guidance and a focused plan aligned to your goals and current market trends.",
     gradient: "from-orange-600 to-red-600",
     features: ["Personalized plans", "Market insights", "Goal tracking"],
-    stats: "7-day action plans"
+    stats: "7-day action plans",
   },
   {
     icon: Briefcase,
     title: "Job Search",
-    description:
-      "Discover roles that fit your skills and preferences.",
+    description: "Discover roles that fit your skills and preferences.",
     gradient: "from-indigo-600 to-purple-600",
     features: ["Smart matching", "Skill assessment", "Application tracking"],
-    stats: "5x more relevant matches"
+    stats: "5x more relevant matches",
   },
   {
     icon: Sparkles,
@@ -839,7 +849,7 @@ const services = [
       "Track hiring trends, skills demand, and sector movements with curated job market news. Use insights to prioritize skills and target the right roles.",
     gradient: "from-pink-600 to-rose-600",
     features: ["Real-time data", "Trend analysis", "Skills forecasting"],
-    stats: "Daily market updates"
+    stats: "Daily market updates",
   },
 ];
 
@@ -852,24 +862,26 @@ const ServiceCard = ({ service, index }) => {
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ 
-        duration: 0.6, 
+      transition={{
+        duration: 0.6,
         delay: index * 0.1,
-        ease: [0.21, 0.47, 0.32, 0.98]
+        ease: [0.21, 0.47, 0.32, 0.98],
       }}
-      whileHover={{ 
+      whileHover={{
         y: -8,
-        transition: { duration: 0.3, ease: "easeOut" }
+        transition: { duration: 0.3, ease: "easeOut" },
       }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       className="group relative overflow-hidden"
     >
       {/* Main Card */}
-      <div className={`relative rounded-3xl p-8 bg-gradient-to-br ${gradient} shadow-lg shadow-gray-900/10 hover:shadow-2xl hover:shadow-gray-900/20 transition-all duration-500`}>
+      <div
+        className={`relative rounded-3xl p-8 bg-gradient-to-br ${gradient} shadow-lg shadow-gray-900/10 hover:shadow-2xl hover:shadow-gray-900/20 transition-all duration-500`}
+      >
         {/* Animated background overlay */}
         <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
-        
+
         {/* Subtle pattern overlay */}
         <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500">
           <div className="absolute top-4 right-4 w-32 h-32 bg-white/10 rounded-full transform translate-x-16 -translate-y-16" />
@@ -880,10 +892,10 @@ const ServiceCard = ({ service, index }) => {
           {/* Icon with animation */}
           <motion.div
             className="mb-6"
-            whileHover={{ 
+            whileHover={{
               scale: 1.1,
               rotate: [0, -5, 5, 0],
-              transition: { duration: 0.4 }
+              transition: { duration: 0.4 },
             }}
           >
             <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/30 transition-colors duration-300">
@@ -909,7 +921,7 @@ const ServiceCard = ({ service, index }) => {
                 className="flex items-center gap-2 text-white/80 text-xs"
                 initial={{ opacity: 0, x: -10 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 + (idx * 0.1) }}
+                transition={{ delay: 0.3 + idx * 0.1 }}
               >
                 <CheckCircle className="w-3 h-3 text-white/60" />
                 <span>{feature}</span>
@@ -922,7 +934,7 @@ const ServiceCard = ({ service, index }) => {
             <div className="text-white/70 text-xs font-semibold uppercase tracking-wider">
               {stats}
             </div>
-            
+
             <motion.div
               className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               whileHover={{ x: 3 }}
@@ -940,7 +952,7 @@ const ServiceCard = ({ service, index }) => {
           transition={{ duration: 0.3 }}
           style={{
             background: `linear-gradient(45deg, rgba(255,255,255,0.1), transparent)`,
-            filter: 'blur(0.5px)'
+            filter: "blur(0.5px)",
           }}
         />
       </div>
@@ -950,7 +962,7 @@ const ServiceCard = ({ service, index }) => {
 
 const HeroPattern = () => {
   return (
-    <motion.div 
+    <motion.div
       className="absolute top-0 right-0 w-1/2 h-full hidden xl:block pointer-events-none opacity-30"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 0.3, scale: 1 }}
@@ -960,40 +972,40 @@ const HeroPattern = () => {
         {/* Floating geometric shapes */}
         <motion.div
           className="absolute top-20 right-20 w-20 h-20 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-xl"
-          animate={{ 
+          animate={{
             y: [0, -20, 0],
             scale: [1, 1.1, 1],
           }}
-          transition={{ 
-            duration: 6, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
           }}
         />
         <motion.div
           className="absolute top-40 right-40 w-16 h-16 bg-gradient-to-br from-blue-400/15 to-cyan-400/15 rounded-2xl rotate-45 blur-lg"
-          animate={{ 
+          animate={{
             y: [0, 15, 0],
             rotate: [45, 75, 45],
           }}
-          transition={{ 
-            duration: 8, 
-            repeat: Infinity, 
+          transition={{
+            duration: 8,
+            repeat: Infinity,
             ease: "easeInOut",
-            delay: 1
+            delay: 1,
           }}
         />
         <motion.div
           className="absolute bottom-40 right-10 w-12 h-12 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-lg"
-          animate={{ 
+          animate={{
             x: [0, 10, 0],
             y: [0, -10, 0],
           }}
-          transition={{ 
-            duration: 7, 
-            repeat: Infinity, 
+          transition={{
+            duration: 7,
+            repeat: Infinity,
             ease: "easeInOut",
-            delay: 2
+            delay: 2,
           }}
         />
       </div>
@@ -1006,14 +1018,14 @@ const ServicesSection = () => {
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: ["start end", "end start"],
   });
 
   const y = useTransform(scrollYProgress, [0, 1], [0, -30]);
 
   return (
-    <section 
-      id="services" 
+    <section
+      id="services"
       ref={containerRef}
       className="relative py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-gray-900 dark:via-gray-800/30 dark:to-gray-900 overflow-hidden"
     >
@@ -1024,14 +1036,14 @@ const ServicesSection = () => {
           className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 rounded-full blur-3xl"
         />
         <motion.div
-          style={{ y: useTransform(y, v => v * -0.8) }}
+          style={{ y: useTransform(y, (v) => v * -0.8) }}
           className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-emerald-500/5 to-cyan-500/5 rounded-full blur-3xl"
         />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header - Centered on large screens */}
-        <motion.div 
+        <motion.div
           className="text-center mb-20 xl:max-w-4xl xl:mx-auto relative"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -1050,7 +1062,7 @@ const ServicesSection = () => {
             Accelerate Your Career
           </motion.div>
 
-          <motion.h2 
+          <motion.h2
             className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight leading-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -1062,7 +1074,7 @@ const ServicesSection = () => {
             </span>
           </motion.h2>
 
-          <motion.p 
+          <motion.p
             className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed font-medium"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -1105,7 +1117,7 @@ const ServicesSection = () => {
               Get Started Today
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </motion.a>
-            
+
             <span className="text-gray-500 dark:text-gray-400 font-medium">
               Start your journey to career success
             </span>
@@ -1116,325 +1128,367 @@ const ServicesSection = () => {
   );
 };
 
-// Testimonials Section Component
-const TestimonialsSection = () => {
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Software Engineer",
-      company: "Tech Corp",
-      content:
-        "Apply Smart helped me land my dream job at a top tech company. The tracking system kept me organized throughout the entire process.",
-      rating: 5,
-      avatar: "SJ",
-    },
-    {
-      name: "Michael Chen",
-      role: "Product Manager",
-      company: "Startup Inc",
-      content:
-        "The AI-powered job matching feature is incredible. It found opportunities I never would have discovered on my own.",
-      rating: 5,
-      avatar: "MC",
-    },
-    {
-      name: "Emily Rodriguez",
-      role: "Marketing Director",
-      company: "Global Agency",
-      content:
-        "The interview preparation tools gave me the confidence I needed to succeed. Highly recommended!",
-      rating: 5,
-      avatar: "ER",
-    },
-  ];
+// Integrations / Providers Section with left→right marquee that pauses on hover
+const providers = [
+  {
+    name: "Adzuna",
+    role: "Job listings",
+    img: "/adzuna.png",
+    href: "https://developer.adzuna.com/overview",
+    description: "Global job search engine with millions of listings",
+    icon: Globe,
+    color: "from-blue-500 to-cyan-500",
+  },
+  {
+    name: "YCombinator",
+    role: "Job listings",
+    img: "/ycombinator.png",
+    href: "https://www.ycombinator.com/jobs",
+    description: "Startup job board with top tech companies",
+    icon: Rocket,
+    color: "from-yellow-500 to-amber-500",
+  },
+  {
+    name: "Jooble",
+    role: "Job listings",
+    img: "/jooble.png",
+    href: "https://jooble.org/api/about",
+    description: "International job board aggregator",
+    icon: Globe,
+    color: "from-emerald-500 to-teal-500",
+  },
+  {
+    name: "Newsdata.io",
+    role: "Job market news",
+    img: "/newsdataapi.png",
+    href: "https://newsdata.io/",
+    description: "Real-time news and market insights",
+    icon: Zap,
+    color: "from-amber-500 to-orange-500",
+  },
+  {
+    name: "Google Gemini",
+    role: "AI career coaching",
+    img: "/gemini.jpg",
+    href: "https://ai.google.dev/",
+    description: "Advanced AI for personalized career guidance",
+    icon: Brain,
+    color: "from-violet-500 to-purple-500",
+  },
+  {
+    name: "Google OAuth",
+    role: "Secure auth",
+    img: "/google.jpg",
+    href: "https://developers.google.com/identity",
+    description: "Enterprise-grade authentication",
+    icon: Shield,
+    color: "from-red-500 to-pink-500",
+  },
+  {
+    name: "RapidAPI",
+    role: "API gateway",
+    img: "/rapidapi.png",
+    href: "https://rapidapi.com/",
+    description: "Unified API management platform",
+    icon: Zap,
+    color: "from-indigo-500 to-blue-500",
+  },
+  {
+    name: "Geolocation",
+    role: "Location signals",
+    img: "/geolocation.png",
+    href: "#",
+    description: "Smart location-based job matching",
+    icon: MapPin,
+    color: "from-cyan-500 to-blue-500",
+  },
+  {
+    name: "GitHub",
+    role: "Dev tooling",
+    img: "/github.png",
+    href: "https://github.com/",
+    description: "Developer portfolio integration",
+    icon: Code,
+    color: "from-gray-600 to-gray-800",
+  },
+];
+
+const ProviderCard = ({ provider, index, isHovered, onHover }) => {
+  const { name, role, img, href, description, icon: Icon, color } = provider;
 
   return (
-    <section className="py-24 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            What Our Users Say
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of successful job seekers who found their dream
-            careers with Apply Smart.
-          </p>
-        </div>
+    <motion.div
+      className="group relative flex-shrink-0 w-80"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      onHoverStart={() => onHover(index)}
+      onHoverEnd={() => onHover(null)}
+    >
+      <motion.a
+        href={href}
+        target={href === "#" ? "_self" : "_blank"}
+        rel={href === "#" ? undefined : "noopener noreferrer"}
+        className="block relative overflow-hidden rounded-2xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-500 p-6"
+        whileHover={{
+          y: -8,
+          scale: 1.02,
+          transition: { duration: 0.3, ease: "easeOut" },
+        }}
+      >
+        {/* Animated background gradient */}
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+        />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
-            >
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
-                  {testimonial.avatar}
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">
-                    {testimonial.name}
-                  </h4>
-                  <p className="text-sm text-gray-500">
-                    {testimonial.role} at {testimonial.company}
-                  </p>
-                </div>
-              </div>
+        {/* Content */}
+        <div className="relative z-10">
+          {/* Logo and Icon */}
+          <div className="flex items-center gap-4 mb-4">
+            <div className="relative">
+              <img
+                src={img}
+                alt={`${name} logo`}
+                className="h-12 w-12 object-contain rounded-lg group-hover:scale-110 transition-transform duration-300"
+                loading="lazy"
+              />
+              {/* Floating icon */}
+              <motion.div
+                className={`absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gradient-to-br ${color} flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                whileHover={{ scale: 1.1, rotate: 180 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Icon className="w-3 h-3 text-white" />
+              </motion.div>
+            </div>
 
-              <div className="flex mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 text-yellow-400 fill-current"
-                  />
-                ))}
-              </div>
-
-              <Quote className="w-6 h-6 text-gray-200 mb-4" />
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {testimonial.content}
+            <div className="flex-1">
+              <h3 className="font-bold text-gray-900 dark:text-white group-hover:text-gray-800 dark:group-hover:text-gray-100 transition-colors">
+                {name}
+              </h3>
+              <p
+                className={`text-sm font-medium bg-gradient-to-r ${color} bg-clip-text text-transparent`}
+              >
+                {role}
               </p>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
 
-// FAQ Section Component
-const FAQSection = () => {
-  const [openIndex, setOpenIndex] = useState(null);
+            <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+          </div>
 
-  const faqs = [
-    {
-      question: "How does the job matching algorithm work?",
-      answer:
-        "Our AI analyzes your skills, experience, and preferences to match you with relevant job opportunities. It continuously learns from your interactions to improve recommendations.",
-    },
-    {
-      question: "Is my personal information secure?",
-      answer:
-        "Yes, we use enterprise-grade security measures including encryption, secure servers, and regular security audits to protect your data.",
-    },
-    {
-      question: "Can I track multiple job applications?",
-      answer:
-        "Absolutely! Our dashboard allows you to track unlimited applications, set reminders, and monitor your progress across all opportunities.",
-    },
-    {
-      question: "Do you offer career coaching services?",
-      answer:
-        "Yes, we provide personalized career coaching from industry experts to help you improve your job search strategy and interview skills.",
-    },
-  ];
-
-  return (
-    <section className="py-24 bg-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-lg text-gray-600 leading-relaxed">
-            Find answers to common questions about Apply Smart.
+          {/* Description */}
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+            {description}
           </p>
+
+          {/* Status indicator */}
+          <div className="flex items-center gap-2 mt-4">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-xs text-gray-500 font-medium">
+              Active Integration
+            </span>
+          </div>
         </div>
 
-        <div className="space-y-3">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="bg-gray-50 rounded-xl p-6 transition-all duration-300 hover:shadow-md"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between text-left"
-              >
-                <h3 className="text-base font-semibold text-gray-900">
-                  {faq.question}
-                </h3>
-                <ChevronDown
-                  className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-
-              {openIndex === index && (
-                <div className="mt-4 pt-4 border-t border-gray-200/50">
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {faq.answer}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+        {/* Hover border effect */}
+        <motion.div
+          className={`absolute inset-0 rounded-2xl ring-1 ring-inset bg-gradient-to-r ${color} opacity-0 group-hover:opacity-20 transition-opacity duration-300`}
+        />
+      </motion.a>
+    </motion.div>
   );
 };
 
-// Contact Section Component
-const ContactSection = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
+const FloatingElements = () => {
+  return (
+    <motion.div
+      className="absolute top-0 right-0 w-1/2 h-full hidden xl:block pointer-events-none opacity-20"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 0.2, scale: 1 }}
+      transition={{ duration: 1.5, delay: 0.8 }}
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Network visualization */}
+        <motion.div
+          className="absolute top-16 right-16 w-24 h-24"
+          animate={{
+            rotate: 360,
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <div className="w-full h-full border-2 border-dashed border-indigo-300/30 rounded-full" />
+          <div className="absolute inset-4 border border-purple-300/40 rounded-full" />
+          <div className="absolute inset-8 w-2 h-2 bg-indigo-400/50 rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+        </motion.div>
+
+        <motion.div
+          className="absolute top-40 right-32 w-6 h-6 bg-gradient-to-br from-emerald-400/30 to-cyan-400/30 rounded-full blur-sm"
+          animate={{
+            y: [0, -15, 0],
+            x: [0, 10, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        <motion.div
+          className="absolute bottom-32 right-20 w-4 h-4 bg-gradient-to-br from-violet-400/40 to-purple-400/40 rounded blur-sm"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.4, 0.6, 0.4],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+      </div>
+    </motion.div>
+  );
+};
+
+const IntegrationsSection = () => {
+  const containerRef = useRef(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
-  const handleSubmit = () => {
-    if (formData.name && formData.email && formData.message) {
-      console.log("Form submitted:", formData);
-      //toast.success('Thank you for your message! We\'ll get back to you soon.');
-      setFormData({ name: "", email: "", message: "" });
-    } else {
-      // toast.error('Please fill in all fields.');
-    }
-  };
+  // Duplicate for seamless loop
+  const loopProviders = [...providers, ...providers];
 
   return (
-    <section id="contact" className="py-24 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Get In Touch
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Have questions? We'd love to hear from you. Send us a message and
-            we'll respond as soon as possible.
-          </p>
-        </div>
+    <section
+      id="integrations"
+      ref={containerRef}
+      className="relative py-32 bg-gradient-to-b from-gray-50/80 via-white to-gray-50/80 dark:from-gray-900/80 dark:via-gray-900 dark:to-gray-900/80 overflow-hidden"
+    >
+      {/* Background decoration */}
+      <div className="absolute inset-0">
+        <motion.div
+          style={{ y }}
+          className="absolute top-32 left-20 w-72 h-72 bg-gradient-to-r from-indigo-400/5 to-purple-400/5 rounded-full blur-3xl"
+        />
+        <motion.div
+          style={{ y: useTransform(y, (v) => v * -0.7) }}
+          className="absolute bottom-32 right-20 w-96 h-96 bg-gradient-to-r from-cyan-400/5 to-blue-400/5 rounded-full blur-3xl"
+        />
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow duration-300">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-6">
-              Send us a message
-            </h3>
-            <div className="space-y-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50"
-                  placeholder="Your name"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50"
-                  placeholder="your@email.com"
-                />
-              </div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header - Centered on large screens */}
+        <motion.div
+          className="text-center mb-20 xl:max-w-4xl xl:mx-auto relative"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98] }}
+        >
+          {/* Floating elements for large screens */}
+          <FloatingElements />
 
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 resize-none"
-                  placeholder="Your message..."
-                />
-              </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-200/50 dark:border-indigo-800/50 px-5 py-2 text-sm font-semibold text-indigo-700 dark:text-indigo-300 mb-8 backdrop-blur-sm"
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            >
+              <Sparkles className="w-4 h-4" />
+            </motion.div>
+            Trusted Integrations
+          </motion.div>
 
-              <button
-                type="submit"
-                onClick={handleSubmit}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-md flex items-center justify-center space-x-2"
-              >
-                <span>Send Message</span>
-                <ArrowRight className="w-5 h-5" />
-              </button>
+          <motion.h2
+            className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight leading-tight"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            Powered by our{" "}
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              integrations
+            </span>
+          </motion.h2>
+
+          <motion.p
+            className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed font-medium"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            These trusted APIs power search, scoring, news, and AI coaching
+            across ApplySmart, delivering real-time insights and personalized
+            career guidance.
+          </motion.p>
+        </motion.div>
+
+        {/* Enhanced Marquee Section */}
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          {/* Marquee Container with modern styling */}
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-white/90 via-gray-50/50 to-white/90 dark:from-gray-800/90 dark:via-gray-700/50 dark:to-gray-800/90 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-xl shadow-gray-900/5 dark:shadow-gray-900/20 py-8 group">
+            {/* Gradient masks for smooth fade */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white/90 to-transparent dark:from-gray-800/90 z-10" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white/90 to-transparent dark:from-gray-800/90 z-10" />
+
+            {/* Tailwind-only animated track */}
+            <div className="flex w-max items-center gap-8 animate-marquee-ltr group-hover:[animation-play-state:paused] motion-reduce:animate-none">
+              {loopProviders.map((provider, index) => (
+                <ProviderCard
+                  key={`${provider.name}-${index}`}
+                  provider={provider}
+                  index={index}
+                  isHovered={hoveredIndex === index}
+                  onHover={setHoveredIndex}
+                />
+              ))}
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow duration-300">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-6">
-                Contact Information
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Phone className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-500">Phone</p>
-                    <p className="text-gray-900">+1 (555) 123-4567</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <Mail className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-500">Email</p>
-                    <p className="text-gray-900">support@applysmart.com</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <MapPin className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-500">Address</p>
-                    <p className="text-gray-900">
-                      123 Career Street, Job City, JC 12345
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {/* Trust indicators */}
+          <motion.div
+            className="flex items-center justify-center gap-8 mt-12"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: 1 }}
+          >
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+              <CheckCircle className="w-5 h-5" />
+              <span className="font-semibold">99.9% Uptime</span>
             </div>
-
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white shadow-md">
-              <h3 className="text-2xl font-semibold mb-4">
-                Ready to start your journey?
-              </h3>
-              <p className="mb-6 text-sm">
-                Join thousands of job seekers who have found success with Apply
-                Smart.
-              </p>
-              <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-300 shadow-sm">
-                Get Started Now
-              </button>
+            <div className="w-px h-8 bg-gray-300 dark:bg-gray-600" />
+            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+              <Shield className="w-5 h-5" />
+              <span className="font-semibold">Enterprise Security</span>
             </div>
-          </div>
-        </div>
+            <div className="w-px h-8 bg-gray-300 dark:bg-gray-600" />
+            <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+              <Zap className="w-5 h-5" />
+              <span className="font-semibold">Real-time Data</span>
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1448,9 +1502,7 @@ function LandingPage() {
       <AuthSection />
       <AboutSection />
       <ServicesSection />
-      <TestimonialsSection />
-      <FAQSection />
-      <ContactSection />
+      <IntegrationsSection />
     </>
   );
 }
