@@ -1,8 +1,18 @@
 {
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/$1"
-    }
+    { "source": "/api/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/$1" },
+
+    { "source": "/register", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/register" },
+    { "source": "/login", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/login" },
+    { "source": "/register/google", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/register/google" },
+    { "source": "/auth/google", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/auth/google" },
+
+    { "source": "/profile/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/profile/$1" },
+    { "source": "/resumes/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resumes/$1" },
+    { "source": "/resumes", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resumes" },
+    { "source": "/resume-details/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resume-details/$1" },
+    { "source": "/upload-resume", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/upload-resume" },
+    { "source": "/score-resume", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/score-resume" },
+    { "source": "/test-static/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/test-static/$1" }
   ]
 }
