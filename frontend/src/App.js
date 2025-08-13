@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import './axios-boot';
 import {
   User,
   Briefcase,
