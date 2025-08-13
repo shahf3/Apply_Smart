@@ -1,17 +1,25 @@
 require('dotenv').config();
+
 const express = require('express');
+const helmet = require('helmet');
+const compression = require('compression');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('./database');
+
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
-const fs = require('fs').promises;
+const upload = multer({ dest: 'uploads/' }); // keep folder lowercase
+const fs = require('fs');
+const fsp = fs.promises;
 const path = require('path');
 const pdfParse = require('pdf-parse');
+
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// routes
 const coachRoutes = require('./routes/coachRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const geolocationRoutes = require('./routes/geolocationRoutes');
@@ -21,9 +29,37 @@ const newsRoutes = require('./routes/newsRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-app.use(express.json());
 
+/* ----------------------------- Core middleware ---------------------------- */
+app.set('trust proxy', 1); // for AWS/ELB/Amplify behind a proxy
+app.use(helmet());
+app.use(compression());
+app.use(express.json({ limit: '4mb' }));
+
+// CORS allow-list: localhost + your public client + *.amplifyapp.com
+const allowList = [
+  'http://localhost:3000',
+  process.env.CLIENT_ORIGIN, // e.g. https://main-xxxx.amplifyapp.com
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true); // allow curl/postman
+      if (allowList.includes(origin) || /\.amplifyapp\.com$/.test(origin)) {
+        return cb(null, true);
+      }
+      return cb(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
+
+/* --------------------------------- Health -------------------------------- */
+app.get('/', (req, res) => res.send('OK'));
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
+/* ------------------------------- Gemini setup ----------------------------- */
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Retry logic with exponential backoff
@@ -35,7 +71,7 @@ async function makeRequestWithRetry(fn, maxRetries = 3, baseDelay = 1000) {
       if (error.status === 503 && attempt < maxRetries) {
         const delay = baseDelay * Math.pow(2, attempt - 1);
         console.log(`Retry ${attempt}/${maxRetries} after ${delay}ms due to 503 error`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
         continue;
       }
       throw error;
@@ -103,6 +139,7 @@ ${cleanedJD}
   }
 }
 
+/* ---------------------------- Auth: Local & Google ------------------------ */
 // Register (Local)
 app.post('/register', async (req, res) => {
   const { username, firstname, lastname, email, password } = req.body;
@@ -161,6 +198,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Register (Google)
 app.post('/register/google', async (req, res) => {
   const { credential } = req.body;
 
@@ -184,12 +222,14 @@ app.post('/register/google', async (req, res) => {
     );
 
     if (existingUser.rows.length > 0) {
-      return res.status(400).json({ message: 'User already registered. Please login instead.' });
+      return res
+        .status(400)
+        .json({ message: 'User already registered. Please login instead.' });
     }
 
-    const result = await pool.query(
+    await pool.query(
       `INSERT INTO users (username, firstname, lastname, email, google_id)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+       VALUES ($1, $2, $3, $4, $5)`,
       [username, firstName, lastName, email, googleId]
     );
 
@@ -200,6 +240,7 @@ app.post('/register/google', async (req, res) => {
   }
 });
 
+// Login (Google)
 app.post('/auth/google', async (req, res) => {
   const { credential } = req.body;
 
@@ -234,6 +275,7 @@ app.post('/auth/google', async (req, res) => {
   }
 });
 
+/* ------------------------------- Profile APIs ----------------------------- */
 // Get profile by user_id
 app.get('/profile/:userId', async (req, res) => {
   const userId = req.params.userId;
@@ -253,7 +295,9 @@ app.get('/profile/:userId', async (req, res) => {
 app.post('/profile', async (req, res) => {
   const { user_id, bio, experience, skills, education } = req.body;
   try {
-    const existingProfile = await pool.query('SELECT * FROM profiles WHERE user_id = $1', [user_id]);
+    const existingProfile = await pool.query('SELECT * FROM profiles WHERE user_id = $1', [
+      user_id,
+    ]);
 
     if (existingProfile.rows.length > 0) {
       await pool.query(
@@ -274,6 +318,7 @@ app.post('/profile', async (req, res) => {
   }
 });
 
+/* ---------------------------- Resume Upload/ATS --------------------------- */
 // Upload resume and extract text
 app.post('/upload-resume', upload.single('resume'), async (req, res) => {
   const { user_id } = req.body;
@@ -281,11 +326,11 @@ app.post('/upload-resume', upload.single('resume'), async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded or user_id missing' });
   }
 
-  const filePath = req.file.path;
+  const filePath = req.file.path; // 'uploads/...'
   const fileName = req.file.originalname;
 
   try {
-    const fileBuffer = await fs.readFile(filePath);
+    const fileBuffer = await fsp.readFile(filePath);
     const parsed = await pdfParse(fileBuffer);
 
     await pool.query(
@@ -298,7 +343,7 @@ app.post('/upload-resume', upload.single('resume'), async (req, res) => {
     res.status(500).json({ error: 'Upload failed' });
   } finally {
     try {
-      await fs.unlink(filePath);
+      await fsp.unlink(filePath);
     } catch (unlinkErr) {
       console.error('Failed to delete uploaded file:', unlinkErr);
     }
@@ -354,12 +399,11 @@ app.get('/resume-details/:resumeId', async (req, res) => {
       return res.status(404).json({ message: 'Resume not found' });
     }
 
-    console.log('Resume details from DB:', result.rows[0]);
-
     const filePath = result.rows[0].path;
-    if (await fs.access(filePath).then(() => true).catch(() => false)) {
+    try {
+      await fsp.access(filePath);
       console.log('File exists at path:', filePath);
-    } else {
+    } catch {
       console.log('File NOT found at path:', filePath);
     }
 
@@ -370,10 +414,10 @@ app.get('/resume-details/:resumeId', async (req, res) => {
   }
 });
 
-// Serve static files
+// Serve static files (debug)
 app.get('/test-static/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filePath = path.join(__dirname, 'Uploads', filename);
+  const filePath = path.join(__dirname, 'uploads', filename); // lowercase
 
   console.log('Testing static file:', filePath);
   console.log('File exists:', fs.existsSync(filePath));
@@ -385,47 +429,19 @@ app.get('/test-static/:filename', (req, res) => {
   }
 });
 
-// Fetch resume content
-app.get('/resume-content/:resumeId', async (req, res) => {
-  const { resumeId } = req.params;
-
-  try {
-    const result = await pool.query('SELECT text_content FROM resumes WHERE id = $1', [resumeId]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Resume not found' });
-    }
-
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Error fetching resume content:', err);
-    res.status(500).json({ error: 'Error fetching resume content' });
-  }
-});
-
 // Score resume
 app.post('/score-resume', upload.single('resume'), async (req, res) => {
   try {
     if (!req.file) {
-      console.error('No file uploaded');
       return res.status(400).json({ error: 'No file uploaded' });
     }
     if (!req.body.jobDescription) {
-      console.error('No jobDescription provided');
       return res.status(400).json({ error: 'No job description provided' });
     }
 
-    console.log('Uploaded file:', req.file);
-    console.log('Job description:', req.body.jobDescription);
-
-    const fileBuffer = await fs.readFile(req.file.path);
+    const fileBuffer = await fsp.readFile(req.file.path);
     const parsed = await pdfParse(fileBuffer);
-
-    console.log('Parsed PDF text length:', parsed.text.length);
-
     const score = await getATSScore(parsed.text, req.body.jobDescription);
-
-    console.log('Score response:', score);
 
     res.json({ score });
   } catch (err) {
@@ -436,32 +452,36 @@ app.post('/score-resume', upload.single('resume'), async (req, res) => {
     res.status(500).json({ error: `Failed to parse PDF or calculate score: ${err.message}` });
   } finally {
     try {
-      await fs.unlink(req.file.path);
+      await fsp.unlink(req.file.path);
     } catch (unlinkErr) {
       console.error('Failed to delete uploaded file:', unlinkErr);
     }
   }
 });
 
-// Routes
+/* --------------------------------- Routes -------------------------------- */
 app.use('/api/jobs', jobRoutes);
 app.use('/api', geolocationRoutes);
 app.use('/api/cover-letter', coverLetterRoutes);
 app.use('/api/interview', interviewRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api', resumeRoutes);
-app.use('/uploads', express.static('Uploads'));
+
+app.use('/uploads', express.static('uploads')); // lowercase
 app.use('/html', express.static(path.join(__dirname, 'public', 'html')));
 app.use('/pdf', express.static(path.join(__dirname, 'public', 'pdf')));
+
 app.use('/api/coach', coachRoutes);
+
+/* ------------------------------ Error handling ---------------------------- */
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
 });
-
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
+/* --------------------------------- Server -------------------------------- */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
