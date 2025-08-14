@@ -14,7 +14,7 @@ function ProfileForm() {
   useEffect(() => {
     // Fetch existing profile data when component mounts
     if (user_id) {
-      axios.get(`http://localhost:5000/profile/${user_id}`)
+      axios.get(`profile/${user_id}`)
         .then(res => setFormData({
           bio: res.data.bio || '',
           experience: res.data.experience || '',
@@ -34,7 +34,7 @@ function ProfileForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/profile', { ...formData, user_id });
+      await axios.post('profile', { ...formData, user_id });
       alert('Profile saved!');
     } catch (err) {
       alert('Failed to save profile');

@@ -25,7 +25,7 @@ function ATSScoringCard() {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('http://localhost:5000/score-resume', formData);
+      const res = await axios.post('score-resume', formData);
       setScore(res.data.score);
     } catch (err) {
       setError('Failed to score resume.');

@@ -25,7 +25,7 @@ function ProfileSummary() {
     if (!user_id) return;
 
     setLoading(true);
-    axios.get(`http://localhost:5000/profile/${user_id}`)
+    axios.get(`profile/${user_id}`)
       .then(res => {
         if (res.data && res.data.bio !== undefined) {
           setProfile(res.data);
@@ -65,7 +65,7 @@ function ProfileSummary() {
     setError('');
     setSuccess('');
 
-    axios.post('http://localhost:5000/profile', {
+    axios.post('profile', {
       user_id,
       ...formData
     })

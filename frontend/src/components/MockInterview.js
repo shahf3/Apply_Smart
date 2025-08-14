@@ -32,7 +32,7 @@ function MockInterview() {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/interview/generate-questions', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await axios.post('interview/generate-questions', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setQuestions(res.data.questions);
       setStep(2);
     } catch (err) {
@@ -56,14 +56,14 @@ function MockInterview() {
     setError('');
     try {
       if (answerMode === 'text') {
-        const res = await axios.post('http://localhost:5000/api/interview/evaluate-answer', { answer, question: questions[currentQuestionIdx], jobDescription });
+        const res = await axios.post('interview/evaluate-answer', { answer, question: questions[currentQuestionIdx], jobDescription });
         setFeedback(res.data);
       } else if (answerMode === 'video' && videoBlob) {
         const formData = new FormData();
         formData.append('video', videoBlob, 'answer.webm');
         formData.append('question', questions[currentQuestionIdx]);
         formData.append('jobDescription', jobDescription);
-        const res = await axios.post('http://localhost:5000/api/interview/evaluate-video-answer', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        const res = await axios.post('interview/evaluate-video-answer', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         setFeedback(res.data);
       }
     } catch (err) {

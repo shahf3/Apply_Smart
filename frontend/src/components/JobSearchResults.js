@@ -65,7 +65,7 @@ function JobSearchResults() {
   useEffect(() => {
     const fetchSuggestions = async (partial = '') => {
       try {
-        const res = await axios.get('http://localhost:5000/api/jobs/suggestions', {
+        const res = await axios.get('jobs/suggestions', {
           params: { partial },
         });
         setSuggestions(res.data);
@@ -86,7 +86,7 @@ function JobSearchResults() {
       const partial = title || location;
       if (partial) {
         axios
-          .get('http://localhost:5000/api/jobs/suggestions', { params: { partial } })
+          .get('jobs/suggestions', { params: { partial } })
           .then(res => setSuggestions(res.data))
           .catch(err => console.warn('Failed to update suggestions:', err));
       }
@@ -101,7 +101,7 @@ function JobSearchResults() {
         async (position) => {
           const { latitude, longitude } = position.coords;
           try {
-            const res = await axios.get('http://localhost:5000/api/geolocation', {
+            const res = await axios.get('geolocation', {
               params: { lat: latitude, lon: longitude },
             });
             if (res.data.country) {
@@ -156,7 +156,7 @@ function JobSearchResults() {
     if (newPage === 1) setResults({});
 
     try {
-      const response = await axios.get('http://localhost:5000/api/jobs/search-jobs', {
+      const response = await axios.get('jobs/search-jobs', {
         params: { 
           title, 
           location, 

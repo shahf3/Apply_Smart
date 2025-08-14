@@ -22,7 +22,7 @@ function CoverLetterGenerator() {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:5000/api/cover-letter/generate-cover-letter', { resumeText, jobDescription });
+      const response = await axios.post('cover-letter/generate-cover-letter', { resumeText, jobDescription });
       setGeneratedLetter(response.data.coverLetter);
     } catch (error) {
       setError('Failed to generate cover letter.');
@@ -48,8 +48,8 @@ function CoverLetterGenerator() {
           <body>${generatedLetter}</body>
         </html>
       `;
-      await axios.post('http://localhost:5000/api/cover-letter/save-html', { fileName, htmlContent: htmlWrapper });
-      const pdfResponse = await axios.post('http://localhost:5000/api/cover-letter/generate-cover-letter-pdf', { fileName, coverLetterHtml: htmlWrapper });
+      await axios.post('cover-letter/save-html', { fileName, htmlContent: htmlWrapper });
+      const pdfResponse = await axios.post('cover-letter/generate-cover-letter-pdf', { fileName, coverLetterHtml: htmlWrapper });
       const pdfUrl = `http://localhost:5000${pdfResponse.data.pdfUrl}`;
       window.open(pdfUrl, '_blank');
     } catch (error) {

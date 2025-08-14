@@ -18,7 +18,7 @@ function LoginUser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/login", credentials);
+      const res = await axios.post("login", credentials);
       const { token, user_id, user_name } = res.data;
       alert("Login successful!");
       localStorage.setItem("token", token);
@@ -33,7 +33,7 @@ function LoginUser() {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       // Send the Google token to the backend for verification
-      const res = await axios.post("http://localhost:5000/auth/google", {
+      const res = await axios.post("auth/google", {
         credential: credentialResponse.credential,
       });
       const { token, user_id, user_name } = res.data;

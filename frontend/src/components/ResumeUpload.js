@@ -9,7 +9,7 @@ function ResumeUpload() {
   const fetchResumes = useCallback(async () => {
     if (!user_id) return;
     try {
-      const res = await axios.get(`http://localhost:5000/resumes/${user_id}`);
+      const res = await axios.get(`resumes/${user_id}`);
       setResumes(res.data);
     } catch (err) {
       console.error(err);
@@ -33,7 +33,7 @@ function ResumeUpload() {
     formData.append('user_id', user_id);
 
     try {
-      await axios.post('http://localhost:5000/upload-resume', formData);
+      await axios.post('upload-resume', formData);
       alert('Resume uploaded!');
       fetchResumes();
       setFile(null); // Clear the file input

@@ -11,7 +11,7 @@ const JobMarketNews = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`http://localhost:5000/api/news/job-news?ts=${Date.now()}`);
+      const response = await axios.get(`news/job-news?ts=${Date.now()}`);
       setArticles(response.data.articles || []);
     } catch (err) {
       console.error("News fetch failed:", err);

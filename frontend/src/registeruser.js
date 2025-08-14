@@ -18,7 +18,7 @@ function RegisterUser() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/register', formData);
+            const response = await axios.post('register', formData);
             alert(response.data.message);
         } catch (error) {
             console.error('Error registering user:', error);
@@ -28,7 +28,7 @@ function RegisterUser() {
 
     const handleGoogleSuccess = async (credentialResponse) => {
         try {
-            const response = await axios.post('http://localhost:5000/register/google', {
+            const response = await axios.post('google', {
                 credential: credentialResponse.credential
             });
             alert(response.data.message);
