@@ -1,23 +1,44 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/$1" },
+    { "source": "/api/auth/google", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/auth/google" },
+    { "source": "/api/register/google", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/register/google" },
+    { "source": "/api/register", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/register" },
+    { "source": "/api/login", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/login" },
 
+    { "source": "/api/upload-resume", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/upload-resume" },
+    { "source": "/api/score-resume", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/score-resume" },
+    { "source": "/api/resumes", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resumes" },
+    { "source": "/api/resumes/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resumes/$1" },
+    { "source": "/api/resume-details/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resume-details/$1" },
+    { "source": "/api/test-static/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/test-static/$1" },
+
+    { "source": "/api/interview/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/interview/$1" },
+    { "source": "/api/coach/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/coach/$1" },
+    { "source": "/api/cover-letter/generate-cover-letter", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/cover-letter/generate-cover-letter" },
+    { "source": "/api/cover-letter/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/cover-letter/$1" },
+    { "source": "/api/jobs/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/jobs/$1" },
+    { "source": "/api/news/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/news/$1" },
+    { "source": "/api/geolocation", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/geolocation" },
+
+    { "source": "/api/health", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/health" },
+    { "source": "/api/health/db", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/health/db" },
+    { "source": "/api/health/env", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/health/env" },
+
+    { "source": "/auth/google", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/auth/google" },
+    { "source": "/register/google", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/register/google" },
     { "source": "/register", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/register" },
     { "source": "/login", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/login" },
-    { "source": "/register/google", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/register/google" },
-    { "source": "/auth/google", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/auth/google" },
-
-    { "source": "/profile/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/profile/$1" },
-    { "source": "/resumes/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resumes/$1" },
-    { "source": "/resumes", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resumes" },
-    { "source": "/resume-details/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resume-details/$1" },
     { "source": "/upload-resume", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/upload-resume" },
     { "source": "/score-resume", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/score-resume" },
+    { "source": "/resumes", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resumes" },
+    { "source": "/resumes/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resumes/$1" },
+    { "source": "/resume-details/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/resume-details/$1" },
     { "source": "/test-static/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/test-static/$1" },
-    { "source": "/interview/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/interview/$1" },
-    { "source": "/coach/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/coach/$1" },
-    { "source": "/cover-letter/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/cover-letter/$1" },
-    { "source": "/jobs/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/jobs/$1" },
-    { "source": "/news/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/news/$1" }
+
+    { "source": "/health", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/health" },
+    { "source": "/health/db", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/health/db" },
+    { "source": "/health/env", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/health/env" },
+
+    { "source": "/api/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/$1" }
   ]
 }
