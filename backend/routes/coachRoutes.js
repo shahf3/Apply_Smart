@@ -25,7 +25,7 @@ const ContextSchema = z.object({
 });
 
 const BodySchema = z.object({
-  prompt: z.string().min(1).max(1000),
+  prompt: z.string().min(1).max(6000),
   context: ContextSchema.nullable().optional(),
   userProfile: z
     .object({
@@ -142,11 +142,8 @@ router.post('/advise', coachLimiter, async (req, res) => {
 
     const rawPrompt = buildPrompt({ prompt, context, userProfile, resumeSummary });
 
-    // Optional: simple caching layer could be added here based on a hash of rawPrompt
-
     const advice = await callGemini(rawPrompt);
 
-    // Normalize fence blocks if the model returns markdown code fences
     const clean = advice.replace(/^```(?:\w+)?\s*|\s*```$/g, '').trim();
 
     return res.json({ advice: clean });
