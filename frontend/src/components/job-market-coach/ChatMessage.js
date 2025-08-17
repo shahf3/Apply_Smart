@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, User } from 'lucide-react';
+import { Bot, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -9,37 +9,43 @@ export default function ChatMessage({ message }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={`flex items-start gap-3 md:gap-4 w-full ${isAssistant ? '' : 'justify-end'}`}
+      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+      className={`flex items-start gap-4 w-full ${isAssistant ? '' : 'justify-end'}`}
     >
       {isAssistant && (
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-md">
-          <Brain className="w-5 h-5 text-white" />
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+          <Bot className="w-5 h-5 text-white" />
         </div>
       )}
 
-      <div className={`flex flex-col max-w-xl ${isAssistant ? 'items-start' : 'items-end'}`}>
-        <div
-          className={`px-4 py-3 rounded-2xl ${
+      <div className={`flex flex-col max-w-2xl ${isAssistant ? 'items-start' : 'items-end'}`}>
+        <motion.div
+          initial={{ scale: 0.9 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.2, delay: 0.1 }}
+          className={`px-6 py-4 rounded-2xl shadow-lg backdrop-blur-sm ${
             isAssistant
-              ? 'bg-gray-700/50 text-gray-200 rounded-bl-none'
-              : 'bg-indigo-600 text-white rounded-br-none'
+              ? 'bg-gray-800/60 text-gray-100 rounded-tl-none border border-gray-700/30'
+              : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-tr-none shadow-indigo-500/20'
           }`}
         >
-          {/* Wrapper carries prose classes. Do not put className on ReactMarkdown itself. */}
-          <div className="prose prose-sm max-w-none prose-invert">
+          <div className={`prose prose-sm max-w-none ${
+            isAssistant 
+              ? 'prose-invert prose-indigo' 
+              : 'prose-white'
+          }`}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
-                p: (props) => <p className="my-2 leading-6" {...props} />,
-                h1: (props) => <h1 className="my-3 text-lg font-semibold" {...props} />,
+                p: (props) => <p className="my-2 leading-relaxed text-sm" {...props} />,
+                h1: (props) => <h1 className="my-3 text-lg font-bold" {...props} />,
                 h2: (props) => <h2 className="my-3 text-base font-semibold" {...props} />,
-                h3: (props) => <h3 className="my-3 text-base font-semibold" {...props} />,
-                ul: (props) => <ul className="my-2 list-disc pl-5" {...props} />,
-                ol: (props) => <ol className="my-2 list-decimal pl-5" {...props} />,
-                li: (props) => <li className="my-1" {...props} />,
+                h3: (props) => <h3 className="my-2 text-base font-semibold" {...props} />,
+                ul: (props) => <ul className="my-3 list-disc pl-6 space-y-1" {...props} />,
+                ol: (props) => <ol className="my-3 list-decimal pl-6 space-y-1" {...props} />,
+                li: (props) => <li className="text-sm leading-relaxed" {...props} />,
                 a: ({ href, children, ...rest }) => {
                   const hasChildren = Array.isArray(children)
                     ? children.length > 0
@@ -59,7 +65,11 @@ export default function ChatMessage({ message }) {
                       href={href}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-indigo-300 hover:text-indigo-200 underline break-words"
+                      className={`underline decoration-2 underline-offset-2 transition-colors duration-200 break-words ${
+                        isAssistant 
+                          ? 'text-indigo-300 hover:text-indigo-200' 
+                          : 'text-indigo-100 hover:text-white'
+                      }`}
                       aria-label={hasChildren ? undefined : fallbackText}
                       {...rest}
                     >
@@ -68,21 +78,43 @@ export default function ChatMessage({ message }) {
                   );
                 },
                 code: (props) => (
-                  <code className="px-1.5 py-0.5 rounded bg-gray-800/60" {...props} />
+                  <code className={`px-2 py-1 rounded-md text-xs font-mono ${
+                    isAssistant 
+                      ? 'bg-gray-900/60 text-indigo-200' 
+                      : 'bg-white/20 text-indigo-100'
+                  }`} {...props} />
                 ),
                 pre: (props) => (
-                  <pre className="p-3 rounded bg-gray-800 overflow-x-auto" {...props} />
+                  <pre className={`p-4 rounded-xl overflow-x-auto text-xs font-mono my-3 ${
+                    isAssistant 
+                      ? 'bg-gray-900/60 border border-gray-700/50' 
+                      : 'bg-white/10 border border-white/20'
+                  }`} {...props} />
+                ),
+                strong: (props) => (
+                  <strong className="font-semibold" {...props} />
+                ),
+                blockquote: (props) => (
+                  <blockquote className={`border-l-4 pl-4 my-3 italic ${
+                    isAssistant 
+                      ? 'border-indigo-500/50 text-gray-300' 
+                      : 'border-white/30 text-indigo-100'
+                  }`} {...props} />
                 ),
               }}
             >
               {message.content}
             </ReactMarkdown>
           </div>
+        </motion.div>
+        
+        <div className="mt-2 text-xs text-gray-500">
+          {isAssistant ? 'AI Coach' : 'You'}
         </div>
       </div>
 
       {!isAssistant && (
-        <div className="w-8 h-8 rounded-lg bg-gray-600 flex items-center justify-center flex-shrink-0 shadow-md">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center flex-shrink-0 shadow-lg">
           <User className="w-5 h-5 text-white" />
         </div>
       )}
