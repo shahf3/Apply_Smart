@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Sparkles, FileText, Target, BookOpen, Star, MessageCircle, Zap } from 'lucide-react';
+import { Send, Sparkles, FileText, Target, BookOpen, Star, MessageCircle, Zap, Button, Textarea, Card, CardContent } from 'lucide-react';
 import ChatMessage from './ChatMessage';
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+//import { Button } from "@/components/ui/button";
+//import { Textarea } from "@/components/ui/textarea";
+//import { Card, CardContent } from "@/components/ui/card";
 
 // Re-using the mock API logic from the parent component
 const mockApi = {
