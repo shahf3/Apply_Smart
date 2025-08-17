@@ -142,30 +142,49 @@ ${cleanedJD}
 /* ---------------------------- Auth: Local & Google ------------------------ */
 // Register (Local)
 app.post('/register', async (req, res) => {
-  const { username, firstname, lastname, email, password } = req.body;
-
   try {
+    const body = req.body || {};
+
+    // normalize names from either style
+    const firstname = body.firstname ?? body.firstName;
+    const lastname  = body.lastname  ?? body.lastName;
+    const { username, email, password } = body;
+
+    // basic validation -> 400 instead of 500 when clients send wrong shape
+    const missing = [];
+    if (!username)  missing.push('username');
+    if (!firstname) missing.push('firstname (or firstName)');
+    if (!lastname)  missing.push('lastname (or lastName)');
+    if (!email)     missing.push('email');
+    if (!password)  missing.push('password');
+
+    if (missing.length) {
+      return res.status(400).json({
+        message: 'Missing required fields',
+        missing
+      });
+    }
+
     const userExists = await pool.query(
-      'SELECT * FROM users WHERE username = $1 OR email = $2',
+      'SELECT 1 FROM users WHERE username = $1 OR email = $2',
       [username, email]
     );
-
     if (userExists.rows.length > 0) {
       return res.status(400).json({ message: 'Username or email already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     await pool.query(
-      `INSERT INTO users (username, firstname, lastname, email, password) 
+      `INSERT INTO users (username, firstname, lastname, email, password)
        VALUES ($1, $2, $3, $4, $5)`,
       [username, firstname, lastname, email, hashedPassword]
     );
 
-    res.status(201).json({ message: 'User registered successfully' });
+    return res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
     console.error('Register error:', err);
-    res.status(500).json({ error: 'Server error' });
+    // keep response generic; details stay in logs
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 
@@ -243,32 +262,38 @@ app.post('/register/google', async (req, res) => {
 // Login (Google)
 app.post('/auth/google', async (req, res) => {
   const { credential } = req.body;
-
   try {
     const ticket = await client.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
     const payload = ticket.getPayload();
     const googleId = payload.sub;
     const email = payload.email;
+    const firstName = payload.given_name || '';
+    const lastName  = payload.family_name || '';
+    const username  = email.split('@')[0];
 
-    const userCheck = await pool.query(
+    let user = await pool.query(
       'SELECT * FROM users WHERE google_id = $1 OR email = $2',
       [googleId, email]
     );
 
-    if (userCheck.rows.length === 0) {
-      return res.status(403).json({ message: 'User not registered. Please register first.' });
+    if (user.rows.length === 0) {
+      await pool.query(
+        `INSERT INTO users (username, firstname, lastname, email, google_id)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [username, firstName, lastName, email, googleId]
+      );
+      user = await pool.query(
+        'SELECT * FROM users WHERE google_id = $1',
+        [googleId]
+      );
     }
 
-    const user = userCheck.rows[0];
-    const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
-
-    res.json({ token, user_id: user.id, user_name: user.firstname });
+    const u = user.rows[0];
+    const token = jwt.sign({ username: u.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.json({ token, user_id: u.id, user_name: u.firstname });
   } catch (error) {
     console.error('Google login failed:', error.message);
     res.status(401).json({ message: 'Login failed', error: error.message });
@@ -457,6 +482,31 @@ app.post('/score-resume', upload.single('resume'), async (req, res) => {
       console.error('Failed to delete uploaded file:', unlinkErr);
     }
   }
+});
+
+app.get('/health/db', async (_req, res) => {
+  try {
+    const r = await pool.query('SELECT 1 AS ok');
+    res.json({ db: 'ok', result: r.rows[0] });
+  } catch (e) {
+    res.status(500).json({ db: 'down', error: e.message });
+  }
+});
+
+app.get('/health/env', (_req, res) => {
+  const url = process.env.DATABASE_URL || '';
+  let safe = null;
+  try {
+    const u = new URL(url);
+    safe = { host: u.hostname, port: u.port, db: u.pathname.slice(1) };
+  } catch {}
+  res.json({
+    has_DATABASE_URL: !!url,
+    database_url_safe: safe,
+    has_JWT_SECRET: !!process.env.JWT_SECRET,
+    client_origin: process.env.CLIENT_ORIGIN || null,
+    node_env: process.env.NODE_ENV || null,
+  });
 });
 
 /* --------------------------------- Routes -------------------------------- */

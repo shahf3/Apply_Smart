@@ -1,11 +1,18 @@
-// File: backend/database.js
-// This code sets up a connection pool to a PostgreSQL database using the 'pg' library.
-
+// backend/database.js
 const { Pool } = require('pg');
-require('dotenv').config();
+const cs = process.env.DATABASE_URL;
+
+const needsSSL =
+  !!cs && (
+    cs.includes('amazonaws.com') ||
+    cs.includes('supabase.co') ||
+    cs.includes('neon.tech') ||
+    /\bsslmode=require\b/i.test(cs)
+  );
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: cs,
+  ssl: needsSSL ? { rejectUnauthorized: false } : false,
 });
 
 module.exports = pool;

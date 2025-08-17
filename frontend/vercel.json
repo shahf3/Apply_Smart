@@ -17,6 +17,7 @@
     { "source": "/api/cover-letter/generate-cover-letter", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/cover-letter/generate-cover-letter" },
     { "source": "/api/cover-letter/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/cover-letter/$1" },
     { "source": "/api/jobs/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/jobs/$1" },
+    { "source": "/api/news/job-news", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/news/job-news" },
     { "source": "/api/news", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/news" },
     { "source": "/api/news/(.*)", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/news/$1" },
     { "source": "/api/geolocation", "destination": "http://applysmart.eu-north-1.elasticbeanstalk.com/api/geolocation" },
