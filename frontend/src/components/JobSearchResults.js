@@ -262,7 +262,7 @@ function JobSearchResults() {
               </div>
               <input
                 type="text"
-                placeholder="Job Title (e.g., Software Engineer)"
+                placeholder="Job Title (e.g Software Engineer)"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 list="title-suggestions"
@@ -281,7 +281,7 @@ function JobSearchResults() {
               </div>
               <input
                 type="text"
-                placeholder="Location (e.g., San Francisco)"
+                placeholder="Location (e.g Dublin)"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 list="location-suggestions"

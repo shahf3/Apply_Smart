@@ -5,26 +5,40 @@ import axios from 'axios';
 import { ReactMediaRecorder } from 'react-media-recorder';
 import { designSystem } from './designSystem';
 
-/** Live camera preview for the current MediaStream */
 function LiveVideo({ stream }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    if (!ref.current) return;
+    const video = ref.current;
+    if (!video) return;
     if (stream) {
-      ref.current.srcObject = stream;
+      video.srcObject = stream;
+      const tryPlay = async () => {
+        try {
+          await video.play();
+        } catch (_) {
+          // Autoplay might be blocked; it will play after next user gesture.
+        }
+      };
+      const onLoaded = () => tryPlay();
+      video.addEventListener('loadedmetadata', onLoaded);
+      tryPlay();
+      return () => {
+        video.removeEventListener('loadedmetadata', onLoaded);
+        video.srcObject = null;
+      };
     } else {
-      ref.current.srcObject = null;
+      video.srcObject = null;
     }
   }, [stream]);
 
   return (
     <video
       ref={ref}
-      autoPlay
+      className="w-full h-full object-contain bg-black rounded-lg"
       muted
       playsInline
-      className="w-full h-full object-contain bg-black rounded-lg"
+      autoPlay
       aria-label="Live camera preview"
     />
   );
@@ -43,6 +57,46 @@ function MockInterview() {
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [cameraStream, setCameraStream] = useState(null);
+  const [cameraErr, setCameraErr] = useState('');
+
+  // Open/close camera when switching to/from video mode
+  useEffect(() => {
+    let active = true;
+
+    const openCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' },
+          audio: true,
+        });
+        if (!active) {
+          // If unmounted/switched quickly, stop tracks immediately
+          stream.getTracks().forEach(t => t.stop());
+          return;
+        }
+        setCameraStream(stream);
+        setCameraErr('');
+      } catch (e) {
+        setCameraErr('Camera/microphone permission denied or unavailable.');
+        setCameraStream(null);
+      }
+    };
+
+    if (answerMode === 'video') {
+      openCamera();
+    }
+
+    return () => {
+      active = false;
+      // Stop tracks when leaving video mode or unmounting
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+      }
+      setCameraStream(null);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answerMode]);
 
   const handleStart = async (e) => {
     e.preventDefault();
@@ -133,12 +187,13 @@ function MockInterview() {
     >
       <h2
         className={`${designSystem.typography.heading} text-lg mb-4 border-b ${designSystem.borders.accent} pb-2 flex items-center gap-2`}
-        title="Practice interviews with AI generated questions"
+        title="Practice interviews with AI-generated questions"
       >
         <Mic className="w-5 h-5 text-blue-600" /> AI Mock Interview
       </h2>
+
       <AnimatePresence>
-        {error && (
+        {(error || cameraErr) && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -147,7 +202,7 @@ function MockInterview() {
           >
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-red-600" />
-              <p className="text-red-600 text-sm">{error}</p>
+              <p className="text-red-600 text-sm">{error || cameraErr}</p>
             </div>
           </motion.div>
         )}
@@ -159,7 +214,7 @@ function MockInterview() {
         <form onSubmit={handleStart} className="space-y-4">
           <div>
             <label className={`${designSystem.typography.body} block text-sm font-medium mb-1`}>
-              Upload Resume (PDF or DOCX)
+              Upload Resume (PDF/DOCX)
             </label>
             <input
               type="file"
@@ -171,7 +226,7 @@ function MockInterview() {
           </div>
           <div>
             <label className={`${designSystem.typography.body} block text-sm font-medium mb-1`}>
-              Job Description. Paste or Upload
+              Job Description (Paste or Upload)
             </label>
             <textarea
               rows={4}
@@ -253,31 +308,35 @@ function MockInterview() {
 
             {answerMode === 'video' && (
               <div>
+                {/* Live preview driven by our own getUserMedia stream */}
+                <div className="border border-gray-200 rounded-lg overflow-hidden aspect-video bg-black mb-3">
+                  {cameraStream ? (
+                    <LiveVideo stream={cameraStream} />
+                  ) : (
+                    <div className="h-full grid place-items-center text-gray-400 text-sm">
+                      {cameraErr ? 'Camera unavailable' : 'Waiting for camera...'}
+                    </div>
+                  )}
+                </div>
+
+                {/* Recorder uses the same open stream, so preview stays live */}
                 <ReactMediaRecorder
-                  video={{ facingMode: 'user' }}
+                  mediaStream={cameraStream || null}
+                  video
                   audio
-                  askPermissionOnMount
-                  blobPropertyBag={{ type: 'video/webm' }}
-                  render={({ status, startRecording, stopRecording, mediaBlobUrl, previewStream, clearBlob }) => (
+                  render={({ status, startRecording, stopRecording, mediaBlobUrl, clearBlob }) => (
                     <div className="space-y-4">
                       <p className={`${designSystem.typography.body} text-sm`}>Status: {status}</p>
 
-                      <div className="border border-gray-200 rounded-lg overflow-hidden aspect-video bg-black">
-                        {previewStream ? (
-                          <LiveVideo stream={previewStream} />
-                        ) : mediaBlobUrl ? (
-                          <video
-                            src={mediaBlobUrl}
-                            controls
-                            className="w-full h-full object-contain bg-black"
-                            aria-label="Preview recorded answer"
-                          />
-                        ) : (
-                          <div className="h-full grid place-items-center text-gray-400 text-sm">
-                            Camera preview will appear here
-                          </div>
-                        )}
-                      </div>
+                      {/* If you want to show the just-recorded clip instead of the live preview, keep this player below */}
+                      {mediaBlobUrl && (
+                        <video
+                          src={mediaBlobUrl}
+                          controls
+                          className="w-full rounded-lg border border-gray-200"
+                          aria-label="Preview recorded answer"
+                        />
+                      )}
 
                       <div className="flex gap-2">
                         <motion.button
@@ -287,7 +346,8 @@ function MockInterview() {
                             setVideoBlob(null);
                             startRecording();
                           }}
-                          className={`${designSystem.colors.success} text-white px-3 py-1 rounded-lg font-medium`}
+                          className={`${designSystem.colors.success} text-white px-3 py-1 rounded-lg font-medium disabled:opacity-60`}
+                          disabled={!cameraStream}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           aria-label="Start recording"
