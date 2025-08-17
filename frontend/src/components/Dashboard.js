@@ -915,7 +915,7 @@ function Dashboard () {
 
         {/* Enhanced Mobile Bottom Navigation */}
         <nav
-          className={`lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-700/50 p-2 z-30`}
+          className={`lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-700/50 p-1 z-30`}
         >
           <div className='flex justify-around'>
             {sidebarItems.slice(0, 5).map(item => (
