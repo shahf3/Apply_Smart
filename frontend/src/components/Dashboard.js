@@ -852,7 +852,7 @@ function Dashboard() {
                 whileTap={{ scale: 0.9 }}
                 className="relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
-                <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                {/*<Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 {notifications > 0 && (
                   <motion.span
                     initial={{ scale: 0 }}
@@ -861,7 +861,7 @@ function Dashboard() {
                   >
                     {notifications}
                   </motion.span>
-                )}
+                )} */}
               </motion.button>
 
               <div className="hidden sm:flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1.5">
