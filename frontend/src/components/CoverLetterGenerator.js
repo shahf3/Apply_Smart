@@ -8,13 +8,17 @@ import {
   Sparkles, 
   FileText, 
   Briefcase,
-  Loader2 
+  Loader2,
+  Button,
+  Alert,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Label,
+  Textarea,
+  AlertDescription
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import 'react-quill/dist/quill.snow.css';
 
 export default function CoverLetterGenerator() {
