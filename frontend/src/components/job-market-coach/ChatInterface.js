@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Sparkles, FileText, Target, BookOpen, Star, MessageCircle, Zap, Button, Textarea, Card, CardContent } from 'lucide-react';
+import { Send, Sparkles, FileText, Target, BookOpen, Star, MessageCircle, Zap } from 'lucide-react';
 import ChatMessage from './ChatMessage';
-//import { Button } from "@/components/ui/button";
-//import { Textarea } from "@/components/ui/textarea";
-//import { Card, CardContent } from "@/components/ui/card";
 
 // Re-using the mock API logic from the parent component
 const mockApi = {
@@ -207,8 +204,11 @@ export default function ChatInterface({ selectedArticle }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <Card className="bg-gray-800/40 border-gray-700/30 hover:bg-gray-800/60 hover:border-gray-600/40 transition-all duration-300 cursor-pointer group">
-                      <CardContent className="p-4" onClick={() => handleSendMessage(prompt.text)}>
+                    <div 
+                      className="bg-gray-800/40 border border-gray-700/30 hover:bg-gray-800/60 hover:border-gray-600/40 transition-all duration-300 cursor-pointer group rounded-xl shadow-lg"
+                      onClick={() => handleSendMessage(prompt.text)}
+                    >
+                      <div className="p-4">
                         <div className="flex items-center gap-3">
                           <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${prompt.color} flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-200`}>
                             <prompt.icon className="w-4 h-4 text-white" />
@@ -217,8 +217,8 @@ export default function ChatInterface({ selectedArticle }) {
                             {prompt.text}
                           </span>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -247,7 +247,7 @@ export default function ChatInterface({ selectedArticle }) {
           <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="relative">
             <div className="relative flex items-end gap-3">
               <div className="flex-1 relative">
-                <Textarea
+                <textarea
                   ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -258,18 +258,18 @@ export default function ChatInterface({ selectedArticle }) {
                     }
                   }}
                   placeholder="Ask your career question, e.g 'How can I transition into a data science role?'"
-                  className="min-h-[52px] max-h-[120px] bg-gray-800/60 text-gray-200 placeholder-gray-400 rounded-xl py-4 px-4 pr-14 resize-none focus:ring-2 focus:ring-indigo-500 focus:outline-none border border-gray-700/50 focus:border-indigo-500/50 transition-all duration-200 backdrop-blur-sm chat-scrollbar"
+                  className="min-h-[52px] max-h-[120px] w-full bg-gray-800/60 text-gray-200 placeholder-gray-400 rounded-xl py-4 px-4 pr-14 resize-none focus:ring-2 focus:ring-indigo-500 focus:outline-none border border-gray-700/50 focus:border-indigo-500/50 transition-all duration-200 backdrop-blur-sm chat-scrollbar"
                   rows={1}
                 />
               </div>
               
-              <Button
+              <button
                 type="submit" 
                 disabled={isLoading || !input.trim()}
-                className="h-[52px] w-[52px] bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100 flex-shrink-0"
+                className="h-[52px] w-[52px] bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100 flex-shrink-0 flex items-center justify-center"
               >
                 <Send className="w-5 h-5 text-white" />
-              </Button>
+              </button>
             </div>
           </form>
           
