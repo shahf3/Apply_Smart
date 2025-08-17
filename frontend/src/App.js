@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import {
   User,
   Briefcase,
@@ -34,6 +34,7 @@ import Footer from "./Footer";
 import LoginUser from "./LoginUser";
 import RegisterUser from "./registeruser";
 import Dashboard from "./components/Dashboard";
+import { PrivateRoute, PublicRoute } from './components/AuthRoutes';
 import GoogleCallback from "./GoogleCallback";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./App.css";
@@ -1509,17 +1510,26 @@ function LandingPage() {
 
 function AppLayout() {
   const location = useLocation();
+
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-white p-0">
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/auth/google/callback" element={<GoogleCallback />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<PublicRoute />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
+        </Route>
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard/*" element={<Dashboard />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      {location.pathname !== "/dashboard" && <Footer />}
+      {!location.pathname.startsWith("/dashboard") && <Footer />}
     </div>
   );
 }
+
 
 function App() {
   return (

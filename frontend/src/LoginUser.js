@@ -24,7 +24,7 @@ function LoginUser() {
       localStorage.setItem("token", token);
       localStorage.setItem("user_id", user_id);
       localStorage.setItem("user_name", user_name);
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       alert(err.response?.data.message || "Login failed");
     }
@@ -41,7 +41,7 @@ function LoginUser() {
       localStorage.setItem("token", token);
       localStorage.setItem("user_id", user_id);
       localStorage.setItem("user_name", user_name);
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       alert("Google login failed");
       console.error("Google login error:", err);

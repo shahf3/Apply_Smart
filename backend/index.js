@@ -7,7 +7,6 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('./database');
-
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // keep folder lowercase
 const fs = require('fs');
