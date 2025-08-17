@@ -565,7 +565,7 @@ function Dashboard () {
       </div>
     )
 
-    /*switch (activeSection) {
+    switch (activeSection) {
       case 'overview':
         return renderOverview()
       case 'profile':
@@ -613,7 +613,7 @@ function Dashboard () {
 
       default:
         return renderOverview()
-    }*/
+    }
   }
 
   const getSectionInfo = () =>
