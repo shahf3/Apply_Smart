@@ -34,7 +34,7 @@ export default function CoverLetterGenerator() {
     setError('');
     
     try {
-      // Simulate API call - replace with actual API endpoint
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 3000));
       
       // Mock generated cover letter
@@ -74,15 +74,8 @@ export default function CoverLetterGenerator() {
   };
 
   const handleDownloadPDF = async () => {
-    try {
-      // Mock PDF download - replace with actual implementation
-      const fileName = `cover_letter_${new Date().toISOString().split('T')[0]}.pdf`;
-      console.log('Downloading:', fileName);
-      // Simulate download
-      alert('PDF download functionality would be implemented here');
-    } catch (error) {
-      setError('Failed to export PDF. Please try again.');
-    }
+    // In a real app, this would call a backend service to generate a PDF
+    alert('PDF download functionality would be implemented here.');
   };
 
   const containerVariants = {
@@ -120,60 +113,46 @@ export default function CoverLetterGenerator() {
 
   return (
     <>
-      {/* Custom Scrollbar Styles */}
       <style jsx global>{`
-        /* Hide scrollbar for Chrome, Safari and Opera */
+        /* Custom Scrollbar Styling */
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
         }
-        
         .custom-scrollbar::-webkit-scrollbar-track {
           background: transparent;
         }
-        
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: rgba(148, 163, 184, 0.3);
           border-radius: 2px;
-          transition: background 0.2s ease;
         }
-        
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(148, 163, 184, 0.6);
         }
-        
-        /* Hide scrollbar for IE, Edge and Firefox */
         .custom-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: thin;  /* Firefox */
+          -ms-overflow-style: none;
+          scrollbar-width: thin;
           scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
         }
-        
-        /* Smooth scrolling for all elements */
-        * {
-          scroll-behavior: smooth;
-        }
-        
-        /* ReactQuill custom styling */
+        * { scroll-behavior: smooth; }
+
+        /* ReactQuill Custom Styling */
         .ql-toolbar {
           border-top-left-radius: 12px !important;
           border-top-right-radius: 12px !important;
           border-color: #e5e7eb !important;
           background: #fafafa !important;
         }
-        
         .ql-container {
           border-bottom-left-radius: 12px !important;
           border-bottom-right-radius: 12px !important;
           border-color: #e5e7eb !important;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
         }
-        
         .ql-editor {
           min-height: 200px !important;
           font-size: 14px !important;
           line-height: 1.6 !important;
         }
-        
         @media (max-width: 768px) {
           .ql-editor {
             min-height: 150px !important;
@@ -199,7 +178,7 @@ export default function CoverLetterGenerator() {
                 Cover Letter Generator
               </h1>
               <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                Create professional, personalized cover letters tailored to any job description
+                Create professional, personalized cover letters tailored to any job description.
               </p>
             </motion.div>
 
@@ -215,183 +194,89 @@ export default function CoverLetterGenerator() {
                 >
                   <Alert variant="destructive" className="bg-red-50 border-red-200 shadow-sm">
                     <AlertCircle className="w-4 h-4" />
-                    <AlertDescription className="text-red-700">
-                      {error}
-                    </AlertDescription>
+                    <AlertDescription className="text-red-700">{error}</AlertDescription>
                   </Alert>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Main Content */}
+            {/* Main Content Grid */}
             <motion.div variants={staggerVariants} className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-7xl mx-auto">
               {/* Input Section */}
               <motion.div variants={itemVariants} className="space-y-6">
-                {/* Resume Input */}
                 <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-3 text-lg font-semibold text-gray-900">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <FileText className="w-4 h-4 text-blue-600" />
-                      </div>
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center"><FileText className="w-4 h-4 text-blue-600" /></div>
                       Resume Content
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <Label htmlFor="resume" className="text-sm font-medium text-gray-700">
-                      Paste your resume text here
-                    </Label>
-                    <Textarea
-                      id="resume"
-                      placeholder="Copy and paste your resume content here. Include your experience, skills, education, and achievements..."
-                      className="min-h-[150px] md:min-h-[200px] resize-none border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm leading-relaxed custom-scrollbar"
-                      value={resumeText}
-                      onChange={(e) => setResumeText(e.target.value)}
-                    />
+                  <CardContent>
+                    <Label htmlFor="resume" className="text-sm font-medium text-gray-700 sr-only">Paste your resume text here</Label>
+                    <Textarea id="resume" placeholder="Copy and paste your resume content..." className="min-h-[150px] md:min-h-[200px] resize-none border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm custom-scrollbar" value={resumeText} onChange={(e) => setResumeText(e.target.value)} />
                   </CardContent>
                 </Card>
 
-                {/* Job Description Input */}
                 <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-3 text-lg font-semibold text-gray-900">
-                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <Briefcase className="w-4 h-4 text-indigo-600" />
-                      </div>
+                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center"><Briefcase className="w-4 h-4 text-indigo-600" /></div>
                       Job Description
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <Label htmlFor="job-description" className="text-sm font-medium text-gray-700">
-                      Paste the job posting details
-                    </Label>
-                    <Textarea
-                      id="job-description"
-                      placeholder="Copy and paste the job description, requirements, and company information here..."
-                      className="min-h-[150px] md:min-h-[200px] resize-none border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm leading-relaxed custom-scrollbar"
-                      value={jobDescription}
-                      onChange={(e) => setJobDescription(e.target.value)}
-                    />
+                  <CardContent>
+                    <Label htmlFor="job-description" className="text-sm font-medium text-gray-700 sr-only">Paste the job posting details</Label>
+                    <Textarea id="job-description" placeholder="Copy and paste the job description..." className="min-h-[150px] md:min-h-[200px] resize-none border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm custom-scrollbar" value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} />
                   </CardContent>
                 </Card>
 
-                {/* Generate Button */}
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full"
-                >
-                  <Button
-                    onClick={handleGenerate}
-                    disabled={loading || !resumeText.trim() || !jobDescription.trim()}
-                    className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                  >
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full">
+                  <Button onClick={handleGenerate} disabled={loading || !resumeText.trim() || !jobDescription.trim()} className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-xl hover:shadow-2xl disabled:opacity-50 transition-all duration-300">
                     {loading ? (
-                      <div className="flex items-center gap-3">
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        <span>Generating your cover letter...</span>
-                      </div>
+                      <><Loader2 className="w-5 h-5 mr-3 animate-spin" />Generating...</>
                     ) : (
-                      <div className="flex items-center gap-3">
-                        <Sparkles className="w-5 h-5" />
-                        <span>Generate Cover Letter</span>
-                      </div>
+                      <><Sparkles className="w-5 h-5 mr-3" />Generate Cover Letter</>
                     )}
                   </Button>
                 </motion.div>
               </motion.div>
 
               {/* Output Section */}
-              <motion.div variants={itemVariants} className="space-y-6">
+              <motion.div variants={itemVariants}>
                 {loading ? (
-                  <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-                    <CardContent className="p-8">
-                      <div className="space-y-6">
-                        <div className="text-center space-y-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto flex items-center justify-center">
-                            <Loader2 className="w-8 h-8 text-white animate-spin" />
-                          </div>
-                          <div className="space-y-2">
-                            <h3 className="text-lg font-semibold text-gray-900">
-                              Creating your perfect cover letter
-                            </h3>
-                            <p className="text-gray-600">
-                              Analyzing your resume and matching it with the job requirements...
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {/* Loading skeleton */}
-                        <div className="space-y-4 animate-pulse">
-                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                          <div className="h-4 bg-gray-200 rounded w-full"></div>
-                          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                        </div>
+                  <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm h-full">
+                    <CardContent className="p-8 flex flex-col items-center justify-center h-full">
+                      <div className="text-center space-y-4">
+                        <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto" />
+                        <h3 className="text-lg font-semibold text-gray-900">Crafting your letter...</h3>
+                        <p className="text-gray-600">Analyzing your resume and the job requirements.</p>
                       </div>
                     </CardContent>
                   </Card>
                 ) : generatedLetter ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="space-y-6"
-                  >
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
                     <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
                       <CardHeader className="pb-4">
                         <CardTitle className="flex items-center justify-between">
-                          <span className="text-lg font-semibold text-gray-900">
-                            Your Personalized Cover Letter
-                          </span>
-                          <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <Button
-                              onClick={handleDownloadPDF}
-                              variant="outline"
-                              size="sm"
-                              className="border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300"
-                            >
-                              <Download className="w-4 h-4 mr-2" />
-                              Export PDF
-                            </Button>
-                          </motion.div>
+                          <span className="text-lg font-semibold text-gray-900">Your Personalized Cover Letter</span>
+                          <Button onClick={handleDownloadPDF} variant="outline" size="sm" className="border-blue-200 text-blue-600 hover:bg-blue-50"><Download className="w-4 h-4 mr-2" />Export PDF</Button>
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="space-y-4">
+                      <CardContent>
                         <div className="bg-gray-50 rounded-xl p-1">
-                          <ReactQuill
-                            value={generatedLetter}
-                            onChange={setGeneratedLetter}
-                            className="bg-white rounded-lg custom-scrollbar"
-                            theme="snow"
-                            modules={{
-                              toolbar: [
-                                [{ 'header': [1, 2, 3, false] }],
-                                ['bold', 'italic', 'underline'],
-                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                ['clean']
-                              ],
-                            }}
-                          />
+                          <ReactQuill value={generatedLetter} onChange={setGeneratedLetter} theme="snow" modules={{ toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'bullet' }]] }} />
                         </div>
                       </CardContent>
                     </Card>
                   </motion.div>
                 ) : (
-                  <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-                    <CardContent className="p-12 text-center">
+                  <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm h-full">
+                    <CardContent className="p-12 text-center flex flex-col items-center justify-center h-full">
                       <div className="w-20 h-20 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
                         <PenTool className="w-10 h-10 text-gray-400" />
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Ready to create your cover letter?
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        Fill in your resume and job description on the left, then click generate to create a personalized cover letter.
-                      </p>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to begin?</h3>
+                      <p className="text-gray-600">Your generated cover letter will appear here once you provide the necessary information.</p>
                     </CardContent>
                   </Card>
                 )}
