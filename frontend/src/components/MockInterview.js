@@ -2,27 +2,29 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, AlertCircle } from 'lucide-react';
 import axios from 'axios';
-import { ReactMediaRecorder } from 'react-media-recorder';
 import { designSystem } from './designSystem';
 
+/** Live camera preview */
 function LiveVideo({ stream }) {
   const ref = useRef(null);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
+
     if (stream) {
       video.srcObject = stream;
       const tryPlay = async () => {
         try {
           await video.play();
-        } catch (_) {
-          // Autoplay might be blocked; it will play after next user gesture.
+        } catch {
+          /* autoplay can be blocked until next user gesture */
         }
       };
       const onLoaded = () => tryPlay();
       video.addEventListener('loadedmetadata', onLoaded);
       tryPlay();
+
       return () => {
         video.removeEventListener('loadedmetadata', onLoaded);
         video.srcObject = null;
@@ -44,6 +46,24 @@ function LiveVideo({ stream }) {
   );
 }
 
+/** Helper: pick a supported mimeType for MediaRecorder */
+function pickSupportedMime() {
+  const candidates = [
+    'video/webm;codecs=vp9,opus',
+    'video/webm;codecs=vp8,opus',
+    'video/webm;codecs=vp9',
+    'video/webm;codecs=vp8',
+    'video/webm',
+    // Some Safari builds may support this; most desktop browsers won’t record mp4
+    'video/mp4;codecs=h264,aac',
+    'video/mp4',
+  ];
+  for (const t of candidates) {
+    if (MediaRecorder.isTypeSupported?.(t)) return t;
+  }
+  return ''; // Let browser choose default
+}
+
 function MockInterview() {
   const [step, setStep] = useState(1);
   const [resumeFile, setResumeFile] = useState(null);
@@ -52,15 +72,23 @@ function MockInterview() {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [answer, setAnswer] = useState('');
-  const [answerMode, setAnswerMode] = useState('text');
-  const [videoBlob, setVideoBlob] = useState(null);
+  const [answerMode, setAnswerMode] = useState('text'); // 'text' | 'video'
+  const [videoBlob, setVideoBlob] = useState(null);     // Blob used for upload
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Camera state
   const [cameraStream, setCameraStream] = useState(null);
   const [cameraErr, setCameraErr] = useState('');
 
-  // Open/close camera when switching to/from video mode
+  // Recording state
+  const mediaRecorderRef = useRef(null);
+  const chunksRef = useRef([]);
+  const [recStatus, setRecStatus] = useState('idle'); // idle | recording | stopped
+  const [recordedUrl, setRecordedUrl] = useState(null); // objectURL for playback
+
+  // Open/close camera when switching into/out of video mode
   useEffect(() => {
     let active = true;
 
@@ -71,13 +99,12 @@ function MockInterview() {
           audio: true,
         });
         if (!active) {
-          // If unmounted/switched quickly, stop tracks immediately
           stream.getTracks().forEach(t => t.stop());
           return;
         }
         setCameraStream(stream);
         setCameraErr('');
-      } catch (e) {
+      } catch {
         setCameraErr('Camera/microphone permission denied or unavailable.');
         setCameraStream(null);
       }
@@ -89,14 +116,91 @@ function MockInterview() {
 
     return () => {
       active = false;
-      // Stop tracks when leaving video mode or unmounting
+      if (mediaRecorderRef.current?.state === 'recording') {
+        try { mediaRecorderRef.current.stop(); } catch {}
+      }
+      // stop tracks when leaving video mode/unmount
       if (cameraStream) {
         cameraStream.getTracks().forEach(t => t.stop());
       }
       setCameraStream(null);
+
+      // cleanup recorded url
+      if (recordedUrl) {
+        URL.revokeObjectURL(recordedUrl);
+      }
+      setRecordedUrl(null);
+      setVideoBlob(null);
+      chunksRef.current = [];
+      setRecStatus('idle');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answerMode]);
+
+  const startRecording = () => {
+    if (!cameraStream || recStatus === 'recording') return;
+    // wipe previous
+    if (recordedUrl) {
+      URL.revokeObjectURL(recordedUrl);
+      setRecordedUrl(null);
+    }
+    setVideoBlob(null);
+    chunksRef.current = [];
+
+    let mr;
+    try {
+      const mimeType = pickSupportedMime();
+      mr = new MediaRecorder(cameraStream, mimeType ? { mimeType } : undefined);
+    } catch (e) {
+      setError('Your browser does not support video recording.');
+      return;
+    }
+    mediaRecorderRef.current = mr;
+
+    mr.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) {
+        chunksRef.current.push(e.data);
+      }
+    };
+    mr.onstop = () => {
+      const type = mr.mimeType || 'video/webm';
+      const blob = new Blob(chunksRef.current, { type });
+      const url = URL.createObjectURL(blob);
+      setRecordedUrl(url);
+      setVideoBlob(blob); // auto-select for submission
+      setRecStatus('stopped');
+    };
+    mr.onerror = () => {
+      setError('Recording error occurred.');
+      setRecStatus('idle');
+    };
+
+    try {
+      mr.start(250); // collect timeslices for responsiveness
+      setRecStatus('recording');
+    } catch {
+      setError('Failed to start recording.');
+    }
+  };
+
+  const stopRecording = () => {
+    const mr = mediaRecorderRef.current;
+    if (mr && mr.state === 'recording') {
+      try {
+        mr.stop();
+      } catch {
+        setError('Failed to stop recording.');
+      }
+    }
+  };
+
+  const clearRecording = () => {
+    if (recordedUrl) URL.revokeObjectURL(recordedUrl);
+    setRecordedUrl(null);
+    setVideoBlob(null);
+    chunksRef.current = [];
+    setRecStatus('idle');
+  };
 
   const handleStart = async (e) => {
     e.preventDefault();
@@ -108,6 +212,7 @@ function MockInterview() {
     if (resumeFile) formData.append('resume', resumeFile);
     if (jobDescriptionFile) formData.append('jobDescriptionFile', jobDescriptionFile);
     if (jobDescription) formData.append('jobDescription', jobDescription);
+
     setLoading(true);
     setError('');
     try {
@@ -116,7 +221,7 @@ function MockInterview() {
       });
       setQuestions(res.data.questions);
       setStep(2);
-    } catch (err) {
+    } catch {
       setError('Failed to generate questions.');
     } finally {
       setLoading(false);
@@ -143,7 +248,7 @@ function MockInterview() {
           jobDescription,
         });
         setFeedback(res.data);
-      } else if (answerMode === 'video' && videoBlob) {
+      } else {
         const formData = new FormData();
         formData.append('video', videoBlob, 'answer.webm');
         formData.append('question', questions[currentQuestionIdx]);
@@ -153,7 +258,7 @@ function MockInterview() {
         });
         setFeedback(res.data);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to evaluate answer.');
     } finally {
       setLoading(false);
@@ -163,7 +268,12 @@ function MockInterview() {
   const handleNextQuestion = () => {
     setFeedback(null);
     setAnswer('');
+    // reset any recording state
+    if (recordedUrl) URL.revokeObjectURL(recordedUrl);
+    setRecordedUrl(null);
     setVideoBlob(null);
+    chunksRef.current = [];
+    setRecStatus('idle');
     setAnswerMode('text');
     setCurrentQuestionIdx((idx) => idx + 1);
   };
@@ -308,7 +418,7 @@ function MockInterview() {
 
             {answerMode === 'video' && (
               <div>
-                {/* Live preview driven by our own getUserMedia stream */}
+                {/* Live preview always visible */}
                 <div className="border border-gray-200 rounded-lg overflow-hidden aspect-video bg-black mb-3">
                   {cameraStream ? (
                     <LiveVideo stream={cameraStream} />
@@ -319,85 +429,58 @@ function MockInterview() {
                   )}
                 </div>
 
-                {/* Recorder uses the same open stream, so preview stays live */}
-                <ReactMediaRecorder
-                  mediaStream={cameraStream || null}
-                  video
-                  audio
-                  render={({ status, startRecording, stopRecording, mediaBlobUrl, clearBlob }) => (
-                    <div className="space-y-4">
-                      <p className={`${designSystem.typography.body} text-sm`}>Status: {status}</p>
+                {/* Recording controls */}
+                <div className="space-y-3">
+                  <p className={`${designSystem.typography.body} text-sm`}>
+                    Status:{' '}
+                    <span className="font-medium">
+                      {recStatus === 'recording' ? 'Recording…' : recStatus === 'stopped' ? 'Recorded (preview below)' : 'Ready'}
+                    </span>
+                  </p>
 
-                      {/* If you want to show the just-recorded clip instead of the live preview, keep this player below */}
-                      {mediaBlobUrl && (
-                        <video
-                          src={mediaBlobUrl}
-                          controls
-                          className="w-full rounded-lg border border-gray-200"
-                          aria-label="Preview recorded answer"
-                        />
-                      )}
+                  <div className="flex flex-wrap gap-2">
+                    <motion.button
+                      type="button"
+                      onClick={startRecording}
+                      disabled={!cameraStream || recStatus === 'recording'}
+                      className={`${designSystem.colors.success} text-white px-3 py-1 rounded-lg font-medium disabled:opacity-60`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Start
+                    </motion.button>
+                    <motion.button
+                      type="button"
+                      onClick={stopRecording}
+                      disabled={recStatus !== 'recording'}
+                      className={`${designSystem.colors.error} text-white px-3 py-1 rounded-lg font-medium disabled:opacity-60`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Stop
+                    </motion.button>
+                    <motion.button
+                      type="button"
+                      onClick={clearRecording}
+                      disabled={!recordedUrl && !videoBlob}
+                      className="bg-gray-400 text-white px-3 py-1 rounded-lg font-medium disabled:opacity-60"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Clear
+                    </motion.button>
+                  </div>
 
-                      <div className="flex gap-2">
-                        <motion.button
-                          type="button"
-                          onClick={() => {
-                            clearBlob();
-                            setVideoBlob(null);
-                            startRecording();
-                          }}
-                          className={`${designSystem.colors.success} text-white px-3 py-1 rounded-lg font-medium disabled:opacity-60`}
-                          disabled={!cameraStream}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          aria-label="Start recording"
-                        >
-                          Start
-                        </motion.button>
-                        <motion.button
-                          type="button"
-                          onClick={stopRecording}
-                          className={`${designSystem.colors.error} text-white px-3 py-1 rounded-lg font-medium`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          aria-label="Stop recording"
-                        >
-                          Stop
-                        </motion.button>
-                        <motion.button
-                          type="button"
-                          onClick={() => {
-                            clearBlob();
-                            setVideoBlob(null);
-                          }}
-                          className="bg-gray-400 text-white px-3 py-1 rounded-lg font-medium"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          aria-label="Clear recording"
-                        >
-                          Clear
-                        </motion.button>
-                      </div>
-
-                      {mediaBlobUrl && (
-                        <motion.button
-                          type="button"
-                          className={`${designSystem.colors.primary} text-white px-3 py-1 rounded-lg font-medium`}
-                          onClick={async () => {
-                            const response = await fetch(mediaBlobUrl);
-                            const blob = await response.blob();
-                            setVideoBlob(blob);
-                          }}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          aria-label="Use this video"
-                        >
-                          Use This Video
-                        </motion.button>
-                      )}
-                    </div>
+                  {/* Recorded clip preview */}
+                  {recordedUrl && (
+                    <video
+                      src={recordedUrl}
+                      controls
+                      className="w-full rounded-lg border border-gray-200"
+                      aria-label="Preview recorded answer"
+                    />
                   )}
-                />
+                </div>
               </div>
             )}
 
