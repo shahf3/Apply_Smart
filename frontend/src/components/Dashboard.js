@@ -24,7 +24,7 @@ import {
   Activity,
   ArrowUpRight,
 } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 import SidebarItem from "./SidebarItem";
 import StatCard from "./StatCard";
 
@@ -37,6 +37,7 @@ const MockInterview = lazy(() => import("./MockInterview"));
 const JobMarketCoach = React.lazy(() => import("./JobMarketCoach"));
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [, setUserId] = useState(null);
@@ -127,7 +128,7 @@ function Dashboard() {
   const handleLogout = () => {
     const uid = localStorage.getItem("user_id");
     if (uid) removeUserDataFromStorage(uid);
-    window.location.href = "/";
+    navigate("/", { replace: true }); 
   };
 
   const calculateProfileCompletion = () => {
