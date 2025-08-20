@@ -11,7 +11,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Bell,
+  LogOut,
   Home,
   AlertCircle,
   Settings,
@@ -85,7 +85,7 @@ function Dashboard() {
       }
     };
     initializeDashboard();
-    //loadDashboardStats();
+
     const handleResize = () => {
       if (window.innerWidth >= 1024) setIsSidebarOpen(false);
       if (window.innerWidth >= 1280) setIsSidebarCollapsed(false);
@@ -93,6 +93,42 @@ function Dashboard() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Logout helpers
+  const removeUserDataFromStorage = (uid) => {
+    try {
+      const prefixes = [`dashboard_stats_${uid}`, `recent_activities_${uid}`];
+      const fields = [
+        "user_id",
+        "user_name",
+        "user_email",
+        "user_bio",
+        "user_skills",
+        "user_experience",
+        "user_education",
+        "auth_token",
+      ];
+
+      fields.forEach((key) => localStorage.removeItem(key));
+
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i += 1) {
+        const key = localStorage.key(i);
+        if (key && prefixes.some((p) => key.startsWith(p))) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((k) => localStorage.removeItem(k));
+    } catch (e) {
+      console.error("Logout storage cleanup error:", e);
+    }
+  };
+
+  const handleLogout = () => {
+    const uid = localStorage.getItem("user_id");
+    if (uid) removeUserDataFromStorage(uid);
+    window.location.href = "/";
+  };
 
   const calculateProfileCompletion = () => {
     let completion = 0;
@@ -362,7 +398,7 @@ function Dashboard() {
                 transition={{ delay: 0.4 }}
                 className="text-md md:text-lg text-indigo-100 mb-6 max-w-xl leading-relaxed"
               >
-                Your career journey continues. Let's achieve something
+                Your career journey continues. Let us achieve something
                 extraordinary.
               </motion.p>
 
@@ -793,6 +829,19 @@ function Dashboard() {
                 </p>
               </div>
 
+              {/* Single Logout in sidebar footer */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Logout"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-semibold">Logout</span>
+              </motion.button>
+
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
@@ -852,16 +901,7 @@ function Dashboard() {
                 whileTap={{ scale: 0.9 }}
                 className="relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
-                {/*<Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                {notifications > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold"
-                  >
-                    {notifications}
-                  </motion.span>
-                )} */}
+                {/* Notifications button placeholder */}
               </motion.button>
 
               <div className="hidden sm:flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1.5">
@@ -879,6 +919,19 @@ function Dashboard() {
                   </p>
                 </div>
               </div>
+
+              {/* Header Logout */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Logout"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-semibold">Logout</span>
+              </motion.button>
             </div>
           </div>
         </header>
