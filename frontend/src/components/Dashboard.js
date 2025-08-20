@@ -1,4 +1,6 @@
+// components/Dashboard.jsx
 import React, { useState, useEffect, lazy, Suspense } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User,
@@ -11,7 +13,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  LogOut,
   Home,
   AlertCircle,
   Settings,
@@ -23,8 +24,9 @@ import {
   Clock,
   Activity,
   ArrowUpRight,
+  LogOut,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
 import SidebarItem from "./SidebarItem";
 import StatCard from "./StatCard";
 
@@ -38,6 +40,7 @@ const JobMarketCoach = React.lazy(() => import("./JobMarketCoach"));
 
 function Dashboard() {
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [, setUserId] = useState(null);
@@ -47,7 +50,6 @@ function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifications] = useState(3);
   const [dashboardStats, setDashboardStats] = useState({
     applications: 0,
     interviews: 0,
@@ -67,16 +69,17 @@ function Dashboard() {
     const initializeDashboard = async () => {
       try {
         const storedId = localStorage.getItem("user_id");
-        const storedName = localStorage.getItem("user_name");
         if (storedId) {
           setUserId(storedId);
-          setUserName(storedName || "User");
+          setUserName(localStorage.getItem("user_name") || "User");
           const completionPercentage = calculateProfileCompletion();
           setProfileCompletion(completionPercentage);
           await loadDashboardStats(storedId);
           await loadRecentActivities(storedId);
         } else {
-          setError("User not logged in.");
+          // If not authenticated, redirect to landing page. Do not show the error screen.
+          navigate("/", { replace: true });
+          return;
         }
       } catch (err) {
         console.error("Dashboard initialization error:", err);
@@ -93,9 +96,8 @@ function Dashboard() {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [navigate]);
 
-  // Logout helpers
   const removeUserDataFromStorage = (uid) => {
     try {
       const prefixes = [`dashboard_stats_${uid}`, `recent_activities_${uid}`];
@@ -109,9 +111,7 @@ function Dashboard() {
         "user_education",
         "auth_token",
       ];
-
       fields.forEach((key) => localStorage.removeItem(key));
-
       const keysToRemove = [];
       for (let i = 0; i < localStorage.length; i += 1) {
         const key = localStorage.key(i);
@@ -128,7 +128,8 @@ function Dashboard() {
   const handleLogout = () => {
     const uid = localStorage.getItem("user_id");
     if (uid) removeUserDataFromStorage(uid);
-    navigate("/", { replace: true }); 
+    // If you also maintain a cookie session, call your API to clear it here.
+    navigate("/", { replace: true });
   };
 
   const calculateProfileCompletion = () => {
@@ -346,14 +347,13 @@ function Dashboard() {
 
   const renderOverview = () => (
     <div className="space-y-8 md:space-y-10">
-      {/* Enhanced Hero Section */}
+      {/* Hero */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700 rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 text-white shadow-xl overflow-hidden"
       >
-        {/* Animated background elements */}
         <div className="absolute inset-0 bg-black/10"></div>
         <motion.div
           animate={{ rotate: 360 }}
@@ -430,7 +430,6 @@ function Dashboard() {
                 </motion.button>
               </motion.div>
             </div>
-
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -465,16 +464,15 @@ function Dashboard() {
         </div>
       </motion.div>
 
-      {/* Enhanced Stats Grid */}
+      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {overviewStats.map((stat, index) => (
           <StatCard key={stat.title} stat={stat} index={index} />
         ))}
       </div>
 
-      {/* Enhanced Content Grid */}
+      {/* Activity + Quick Actions */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8">
-        {/* Recent Activity with enhanced design */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -542,7 +540,6 @@ function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Enhanced Quick Actions */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -647,7 +644,6 @@ function Dashboard() {
             <JobMarketCoach />
           </React.Suspense>
         );
-
       default:
         return renderOverview();
     }
@@ -680,6 +676,7 @@ function Dashboard() {
     );
   }
 
+  // Keep this error screen for genuine errors only.
   if (error) {
     return (
       <div className="min-h-screen bg-red-50 dark:bg-red-900/20 flex items-center justify-center p-4">
@@ -696,7 +693,7 @@ function Dashboard() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => (window.location.href = "/")}
+            onClick={() => navigate("/", { replace: true })}
             className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
           >
             Return to Login
@@ -727,7 +724,7 @@ function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* Enhanced Sidebar */}
+      {/* Sidebar */}
       <motion.aside
         initial={false}
         animate={{
@@ -739,7 +736,7 @@ function Dashboard() {
                      isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                    }`}
       >
-        {/* Enhanced Sidebar Header */}
+        {/* Sidebar Header */}
         <div
           className={`flex items-center justify-between flex-shrink-0 ${
             isSidebarCollapsed ? "p-4" : "p-5"
@@ -788,7 +785,7 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Enhanced Navigation */}
+        {/* Navigation */}
         <nav className="p-3 flex-1 overflow-y-auto scrollbar-width-none [&::-webkit-scrollbar]:hidden">
           <div className="space-y-2">
             {sidebarItems.map((item, index) => (
@@ -807,7 +804,7 @@ function Dashboard() {
           </div>
         </nav>
 
-        {/* Enhanced Sidebar Footer */}
+        {/* Sidebar Footer with Logout */}
         {!isSidebarCollapsed && (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -829,8 +826,6 @@ function Dashboard() {
                   Premium
                 </p>
               </div>
-
-              {/* Single Logout in sidebar footer */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -842,7 +837,6 @@ function Dashboard() {
                 <LogOut className="w-4 h-4" />
                 <span className="text-sm font-semibold">Logout</span>
               </motion.button>
-
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
@@ -861,7 +855,7 @@ function Dashboard() {
           isSidebarCollapsed ? "lg:pl-[5.5rem]" : "lg:pl-[18rem]"
         }`}
       >
-        {/* Enhanced Header */}
+        {/* Header */}
         <header className="sticky top-0 z-30 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl shadow-sm border-b border-gray-200/50 dark:border-gray-700/50">
           <div className="flex items-center justify-between p-4 lg:p-5">
             <div className="flex items-center gap-4">
@@ -897,14 +891,6 @@ function Dashboard() {
                 )}
               </motion.button>
 
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              >
-                {/* Notifications button placeholder */}
-              </motion.button>
-
               <div className="hidden sm:flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1.5">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center">
                   <span className="text-white font-bold text-sm">
@@ -937,9 +923,8 @@ function Dashboard() {
           </div>
         </header>
 
-        {/* Main Content Area */}
+        {/* Content */}
         <main className="p-4 md:p-6 max-w-7xl mx-auto">
-          {/* Enhanced Breadcrumb */}
           <motion.nav
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -953,7 +938,6 @@ function Dashboard() {
             </span>
           </motion.nav>
 
-          {/* Content */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSection}
@@ -967,7 +951,7 @@ function Dashboard() {
           </AnimatePresence>
         </main>
 
-        {/* Enhanced Mobile Bottom Navigation */}
+        {/* Mobile Bottom Navigation */}
         <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-t border-gray-200/50 dark:border-gray-700/50 p-1 z-30">
           <div className="flex justify-between px-1">
             {sidebarItems.slice(0, 5).map((item) => (

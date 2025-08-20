@@ -1,6 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
-const isAuthed = () => !!localStorage.getItem('token');
+const isAuthed = () => {
+  return !!localStorage.getItem("user_id");
+};
 
 export function PrivateRoute() {
   return isAuthed() ? <Outlet /> : <Navigate to="/" replace />;
